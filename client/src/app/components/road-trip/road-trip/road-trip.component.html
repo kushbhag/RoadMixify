@@ -1,5 +1,67 @@
-<p>Hello</p>
-<div *ngIf="user">
-    <p>{{ user.access_token }}</p>
-    <p>{{ user.refresh_token }}</p>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            Road Trip Playlist
+        </div>
+        <div class="card-body">
+            <form [formGroup]="playlistForm"
+                (ngSubmit)="save()">
+                <div class="form-group">
+                    <div formArrayName="artists">
+                        <div [formGroupName]="i"
+                            *ngFor="let artist of artists.controls; let i=index">
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label" attr.for="{{ 'artists' + i }}">
+                                    Artist Name:
+                                </label>
+                                <div class="col-md-7">
+                                    <input class="form-control"
+                                            id="{{ 'artist' + i }}"
+                                            type="text"
+                                            placeholder="Artist Name"
+                                            formControlName="name"
+                                            (ngModelChange)="autofill($event)"
+                                            autocomplete="off">
+                                    <div class="dropdown" attr.for="{{'artist' + i}}">
+                                        <div *ngFor="let s of searchResult">
+                                            <button type="button">{{s.name}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-danger"
+                                        type="button"
+                                        (click)="deleteArtist(i)">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary"
+                            type="button"
+                            (click)="addArtist()">
+                            Add Another Address
+                    </button>
+                </div>
+                <button class="btn btn-primary"
+                        type="submit"
+                        [title]="'Submit'">
+                    Submit
+                </button>
+            </form>
+        </div>
+        <div *ngIf="recentlyPlayed">
+            <table>
+                <thead>
+                    <th>Number</th>
+                    <th>Name</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let track of recentlyPlayed; let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{ track.track.name }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

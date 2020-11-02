@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ArtistSearch } from '../models/artist/artist-search.model';
+import { CursorPagingObject } from '../models/cursor-paging-object.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -8,21 +11,68 @@ import { User } from '../models/user.model';
 export class SpotifyService {
   user: User;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     console.log('New Instance Created');
   }
 
-  getHashParams() {
-    var tempUser = new User();
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
-        q = window.location.hash.substring(1);
-    while ( e = r.exec(q)) {
-      if (e[1] === 'access_token') {
-        tempUser.access_token = decodeURIComponent(e[2]);
-      } else if (e[1] === 'refresh_token') {
-        tempUser.refresh_token = decodeURIComponent(e[2]);
-      }
+  getCurrentPlayback() {
+    if (!this.user) {
+      this.user = JSON.parse(localStorage.getItem('user'));
     }
-    return tempUser;
+    return this.http.get("https://api.spotify.com/v1/me/player", {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getRecentlyPlayed(): Observable<CursorPagingObject> {
+    if (!this.user) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+    }
+    return this.http.get<CursorPagingObject>("https://api.spotify.com/v1/me/player/recently-played", {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  pause() {
+    return this.http.put("https://api.spotify.com/v1/me/player/pause", {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getTopTracks() {
+    console.log(this.user.access_token);
+    return this.http.get("https://api.spotify.com/v1/me/top/artists", {
+      params: {
+        time_range: 'medium_term'
+      },
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  // Searches
+  searchString (search: string): string {
+    return search.split(' ').join('%20');
+  }
+
+  searchArtist(search: string): Observable<ArtistSearch> {
+    if (!this.user) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+    }
+    let url = 'https://api.spotify.com/v1/search?type=artist&limit=5&q=' + this.searchString(search);
+    console.log(url);
+    return this.http.get<ArtistSearch>(url, {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
   }
 }
