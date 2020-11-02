@@ -14,47 +14,45 @@ export class RoadTripComponent implements OnInit {
   recentlyPlayed: PlayHistory[];
   playlistForm: FormGroup;
   searchResult: Artist[];
+  artists: Artist[];
 
 
   constructor(private fb: FormBuilder,
               private spotifyService: SpotifyService) {
-  }
-
-  get artists(): FormArray {
-    return this.playlistForm.get('artists') as FormArray;
-  }
-
-  buildArtist(): FormGroup {
-    return this.fb.group({
-      name: ['', Validators.required]
-    });
+    this.artists = [];
   }
 
   addArtist() {
-    this.artists.push(this.buildArtist());
+    this.spotifyService.searchArtist(this.playlistForm.get('artists').value, 1).subscribe((val) => {
+      console.log(val);
+      this.artists.push(val.artists.items[0]);
+    });
   }
 
-  deleteArtist(index: number) {
-    this.artists.removeAt(index);
+  removeArtist(index: number) {
+    this.artists.splice(index, 1);
   }
 
   save() {
-    console.log(this.playlistForm);
+    console.log(this.artists);
   }
 
-  autofill(e) {
-    this.spotifyService.searchArtist(e).subscribe((val) => {
-      console.log(val);
-      this.searchResult = val.artists.items;
-    });
+  autofill(s) {
+    if (s != ''){
+      this.spotifyService.searchArtist(s, 5).subscribe((val) => {
+        this.searchResult = val.artists.items;
+      });
+    } else {
+      this.searchResult = [];
+    }
   }
 
   ngOnInit(): void {
     this.playlistForm = this.fb.group({
-      artists: this.fb.array([this.buildArtist()])
+      artists: ['']
     });
-    this.spotifyService.getRecentlyPlayed().subscribe((val) => {
-      this.recentlyPlayed = val.items;
+    this.playlistForm.get('artists').valueChanges.subscribe((search) => {
+      this.autofill(search);
     });
   }
 

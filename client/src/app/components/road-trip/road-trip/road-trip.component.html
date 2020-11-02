@@ -7,40 +7,50 @@
             <form [formGroup]="playlistForm"
                 (ngSubmit)="save()">
                 <div class="form-group">
-                    <div formArrayName="artists">
-                        <div [formGroupName]="i"
-                            *ngFor="let artist of artists.controls; let i=index">
-                            <div class="form-group row">
-                                <label class="col-md-3 col-form-label" attr.for="{{ 'artists' + i }}">
-                                    Artist Name:
-                                </label>
-                                <div class="col-md-7">
-                                    <input class="form-control"
-                                            id="{{ 'artist' + i }}"
-                                            type="text"
-                                            placeholder="Artist Name"
-                                            formControlName="name"
-                                            (ngModelChange)="autofill($event)"
-                                            autocomplete="off">
-                                    <div class="dropdown" attr.for="{{'artist' + i}}">
-                                        <div *ngFor="let s of searchResult">
-                                            <button type="button">{{s.name}}</button>
-                                        </div>
-                                    </div>
+                    <div class="row">
+                        <h4 class="col-md-3">Add Artist: </h4>
+                        <div class="col-md-6">
+                            <input class="form-control"
+                                    type="text"
+                                    placeholder="Artist Name"
+                                    formControlName="artists"
+                                    autocomplete="off">
+                            <div class="dropdown">
+                                <div *ngFor="let s of searchResult">
+                                    <button type="button">{{s.name}}</button>
                                 </div>
-                                <button class="btn btn-danger"
-                                        type="button"
-                                        (click)="deleteArtist(i)">
-                                    Remove
-                                </button>
                             </div>
                         </div>
-                    </div>
-                    <button class="btn btn-outline-primary"
+                        <button class="col-md-2 btn btn-outline-primary"
                             type="button"
                             (click)="addArtist()">
-                            Add Another Address
-                    </button>
+                            Add Artist
+                        </button>
+                    </div>
+                    <div class="row">
+                        <table class="table">
+                            <thead>
+                                <th scope="col">Image</th>
+                                <th scope="col">Artist</th>
+                                <th scope="col"></th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let a of artists; let i=index">
+                                    <th scope="row">
+                                        <img src="{{a.images[2]?.url}}">
+                                    </th>
+                                    <td>{{a.name}}</td>
+                                    <td>
+                                        <button class="btn btn-danger"
+                                            type="button"
+                                            (click)="removeArtist(i)">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <button class="btn btn-primary"
                         type="submit"

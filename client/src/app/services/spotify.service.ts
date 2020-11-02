@@ -63,12 +63,11 @@ export class SpotifyService {
     return search.split(' ').join('%20');
   }
 
-  searchArtist(search: string): Observable<ArtistSearch> {
+  searchArtist(search: string, limit: number): Observable<ArtistSearch> {
     if (!this.user) {
       this.user = JSON.parse(localStorage.getItem('user'));
     }
-    let url = 'https://api.spotify.com/v1/search?type=artist&limit=5&q=' + this.searchString(search);
-    console.log(url);
+    let url = 'https://api.spotify.com/v1/search?type=artist&limit=' + limit.toString() + '&q=' + this.searchString(search);
     return this.http.get<ArtistSearch>(url, {
       headers: {
         Authorization: 'Bearer ' + this.user.access_token
