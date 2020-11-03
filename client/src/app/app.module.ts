@@ -10,13 +10,16 @@ import { LoginComponent } from './components/login/login.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http'
 import { ReactiveFormsModule } from '@angular/forms';
+import { RoadTripPlaylistComponent } from './components/road-trip/road-trip-playlist/road-trip-playlist.component';
+import { PlaylistService } from './services/playlist.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     RoadTripComponent,
-    LoginComponent
+    LoginComponent,
+    RoadTripPlaylistComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +29,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule
   ],
   providers: [
-    SpotifyService
+    SpotifyService,
+    PlaylistService
   ],
   bootstrap: [AppComponent]
 })

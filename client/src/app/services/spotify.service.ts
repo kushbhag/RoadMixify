@@ -1,8 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Album } from '../models/album.model';
 import { ArtistSearch } from '../models/artist/artist-search.model';
 import { CursorPagingObject } from '../models/cursor-paging-object.model';
+import { PagingObject } from '../models/paging-object.model';
+import { Playlist } from '../models/playlist.model';
+import { Track } from '../models/track.model';
+import { Tracks } from '../models/tracks.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -12,7 +17,6 @@ export class SpotifyService {
   user: User;
 
   constructor(private http: HttpClient) {
-    console.log('New Instance Created');
   }
 
   getCurrentPlayback() {
@@ -37,22 +41,99 @@ export class SpotifyService {
     });
   }
 
-  pause() {
-    return this.http.put("https://api.spotify.com/v1/me/player/pause", {
+  // Post
+  createPlaylist(id: string): Observable<Playlist> {
+    return this.http.post<Playlist>("https://api.spotify.com/v1/users/"+id+"/playlists", {
+      "name": 'test'
+    },
+    {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token,
+        "Content-Type": 'application/json'
+      }
+    });
+  }
+
+  addToPlaylist(playlistId: string, trackIds: string[]) {
+    let fullQuery: string = '';
+    for (let i = 0; i < trackIds.length; i ++) {
+      fullQuery += 'spotify:track:' + trackIds[i];
+      if (i + 1 < trackIds.length) {
+        fullQuery += ',';
+      }
+    }
+    return this.http.post("https://api.spotify.com/v1/playlists/"+playlistId+"/tracks", 
+    {
+    },
+    {
+      params: {
+        uris: fullQuery
+      },
       headers: {
         Authorization: 'Bearer ' + this.user.access_token
       }
     });
   }
 
-  getTopTracks() {
-    console.log(this.user.access_token);
-    return this.http.get("https://api.spotify.com/v1/me/top/artists", {
+  // Get all artist's albums/tracks
+  getArtistsAlbums(id: string): Observable<PagingObject> {
+    return this.http.get<PagingObject>("https://api.spotify.com/v1/artists/"+id+"/albums", {
       params: {
-        time_range: 'medium_term'
+        include_groups: 'album,single',
+        country: 'CA',
+        limit: '50'
       },
       headers: {
-        Accept: 'application/json',
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getAlbumTracks(id: string): Observable<PagingObject> {
+    return this.http.get<PagingObject> ("https://api.spotify.com/v1/albums/"+id+"/tracks", {
+      params: {
+        limit: '50',
+        market: 'CA'
+      },
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getTracks(ids: string[]): Observable<Tracks> {
+    let fullQuery: string = '';
+    for (let i = 0; i < ids.length; i ++) {
+      fullQuery += ids[i];
+      if (i + 1 < ids.length) {
+        fullQuery += ',';
+      }
+    }
+    return this.http.get<Tracks>("https://api.spotify.com/v1/tracks/", {
+      params: {
+        ids: fullQuery,
+        market: 'CA'
+      },
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getTrack(id: string): Observable<Track> {
+    return this.http.get<Track>("https://api.spotify.com/v1/tracks/"+id, {
+      params: {
+        market: 'CA'
+      },
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getUser(): Observable<User> {
+    return this.http.get<User>("https://api.spotify.com/v1/me", {
+      headers: {
         Authorization: 'Bearer ' + this.user.access_token
       }
     });

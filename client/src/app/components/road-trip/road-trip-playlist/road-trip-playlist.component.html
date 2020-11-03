@@ -1,0 +1,17 @@
+<ul class="list-group">
+    <li class="list-group-item" *ngFor="let track of tracks">
+        <div class="row">
+            <div class="col-md-3">
+                <img src="{{track.album.images[2].url}}">
+            </div>
+            <div class="col-md-9">
+                <h5>
+                    {{track.name}}
+                </h5>
+            </div>
+        </div>
+    </li>
+</ul>
+<button class="button button-primary" (click)="addPlaylist()">
+    Add Playlist
+</button>

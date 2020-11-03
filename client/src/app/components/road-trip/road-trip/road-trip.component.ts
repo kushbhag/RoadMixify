@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Artist } from 'src/app/models/artist/artist.model';
 import { PlayHistory } from 'src/app/models/play-history.model';
+import { PlaylistService } from 'src/app/services/playlist.service';
 import { SpotifyService } from 'src/app/services/spotify.service';
 
 @Component({
@@ -16,15 +18,15 @@ export class RoadTripComponent implements OnInit {
   searchResult: Artist[];
   artists: Artist[];
 
-
   constructor(private fb: FormBuilder,
-              private spotifyService: SpotifyService) {
+              private playlistService: PlaylistService,
+              private spotifyService: SpotifyService,
+              private router: Router) {
     this.artists = [];
   }
 
   addArtist() {
     this.spotifyService.searchArtist(this.playlistForm.get('artists').value, 1).subscribe((val) => {
-      console.log(val);
       this.artists.push(val.artists.items[0]);
     });
   }
@@ -34,7 +36,8 @@ export class RoadTripComponent implements OnInit {
   }
 
   save() {
-    console.log(this.artists);
+    this.playlistService.artists = this.artists;
+    this.router.navigate(['playlist']);
   }
 
   autofill(s) {
