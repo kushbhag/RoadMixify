@@ -7,14 +7,44 @@
             <form [formGroup]="playlistForm"
                 (ngSubmit)="save()">
                 <div class="form-group">
-                    <div class="form-group row">
-                        <label for=""></label>
-                        <input class="form-control" 
-                               type="time">
+                    <div formGroupName="duration">
+                        <div class="form-group row">
+                            <h4 class="col-md-2">Duration:</h4>
+                            <div class="col-4 col-md-3">
+                                <input formControlName="hours" class="form-control" type="number" id="hours" placeholder="0"
+                                       [ngClass]="{'is-invalid': !duration.controls.hours.valid}">
+                                <label for="hours">Hours</label>
+                                <span class="invalid-feedback">
+                                    <span *ngIf="!duration.controls.hours.valid">
+                                        Hours must be greater than or equal to 0 and less than 48
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <input formControlName="minutes" class="form-control" type="number" id="minutes" placeholder="0"
+                                       [ngClass]="{'is-invalid': !duration.controls.minutes.valid}">
+                                <label for="minutes">Minutes</label>
+                                <span class="invalid-feedback">
+                                    <span *ngIf="!duration.controls.minutes.valid">
+                                        Minutes must be greater than or equal to 0 and less than 60
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col-4 col-md-3">
+                                <input formControlName="seconds" class="form-control" type="number" id="seconds" placeholder="0"
+                                       [ngClass]="{'is-invalid': !duration.controls.seconds.valid}">
+                                <label for="seconds">Seconds</label>
+                                <span class="invalid-feedback">
+                                    <span *ngIf="!duration.controls.seconds.valid">
+                                        Seconds must be greater than or equal to 0 and less than 60
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group row">
-                        <h4 class="col-md-3">Add Artist: </h4>
-                        <div class="col-md-6">
+                        <h4 class="col-md-2">Add Artist: </h4>
+                        <div class="col-md-7">
                             <input class="form-control"
                                     type="text"
                                     placeholder="Artist Name"
@@ -22,18 +52,23 @@
                                     autocomplete="off">
                             <div class="dropdown">
                                 <div *ngFor="let s of searchResultArtist">
-                                    <button type="button">{{s.name}}</button>
+                                    <button (click)="fitText(s.name, 'artists')" class="form-control" type="button"  style="height:auto;">
+                                        <img class="image-search" src="{{s.images[2]?.url}}">
+                                        {{s.name}}
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <button class="col-md-2 btn btn-outline-primary"
-                            type="button"
-                            (click)="addArtist()">
-                            Add Artist
-                        </button>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary col-12"
+                                type="button"
+                                (click)="addArtist()">
+                                Add Artist
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group row table-data">
-                        <table class="table">
+                        <table *ngIf="artists.length > 0" class="table">
                             <thead>
                                 <th scope="col">Image</th>
                                 <th scope="col">Artist</th>
@@ -57,8 +92,8 @@
                         </table>
                     </div>
                     <div class="form-group row">
-                        <h4 class="col-md-3">Add Album: </h4>
-                        <div class="col-md-6">
+                        <h4 class="col-md-2">Add Album: </h4>
+                        <div class="col-md-7">
                             <input class="form-control"
                                     type="text"
                                     placeholder="Album Name"
@@ -66,18 +101,23 @@
                                     autocomplete="off">
                             <div class="dropdown">
                                 <div *ngFor="let s of searchResultAlbum">
-                                    <button type="button">{{s.name}}</button>
+                                    <button (click)="fitText(s.name, 'albums')" class="form-control" type="button" style="height:auto;">
+                                        <img class="image-search" src="{{s.images[2]?.url}}">
+                                        {{s.name}}
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        <button class="col-md-2 btn btn-outline-primary"
-                            type="button"
-                            (click)="addAlbum()">
-                            Add Album
-                        </button>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary col-12"
+                                type="button"
+                                (click)="addAlbum()">
+                                Add Album
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group row table-data">
-                        <table class="table">
+                        <table *ngIf="albums.length > 0" class="table">
                             <thead>
                                 <th scope="col">Image</th>
                                 <th scope="col">Album</th>
@@ -101,26 +141,22 @@
                         </table>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <div *ngIf="errorMessage !== ''" class="col-12">
+                        <div class="alert alert-secondary" role="alert">
+                            {{errorMessage}}
+                        </div>
+                    </div>
+                </div>
                 <button class="btn btn-primary"
                         type="submit"
                         [title]="'Submit'">
                     Submit
                 </button>
+                <button type="button" class="btn btn-danger" (click)="reset()">
+                    Reset
+                </button>
             </form>
-        </div>
-        <div *ngIf="recentlyPlayed">
-            <table>
-                <thead>
-                    <th>Number</th>
-                    <th>Name</th>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let track of recentlyPlayed; let i=index">
-                        <td>{{i+1}}</td>
-                        <td>{{ track.track.name }}</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>

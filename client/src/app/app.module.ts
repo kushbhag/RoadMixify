@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http'
 import { ReactiveFormsModule } from '@angular/forms';
 import { RoadTripPlaylistComponent } from './components/road-trip/road-trip-playlist/road-trip-playlist.component';
 import { PlaylistService } from './services/playlist.service';
+import { AuthGuard } from './guards/auth.guard';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { PlaylistService } from './services/playlist.service';
   ],
   providers: [
     SpotifyService,
-    PlaylistService
+    PlaylistService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })

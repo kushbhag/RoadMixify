@@ -20,27 +20,31 @@ export class SpotifyService {
   constructor(private http: HttpClient) {
   }
 
-  getCurrentPlayback() {
-    if (!this.user) {
-      this.user = JSON.parse(localStorage.getItem('user'));
-    }
-    return this.http.get("https://api.spotify.com/v1/me/player", {
-      headers: {
-        Authorization: 'Bearer ' + this.user.access_token
-      }
-    });
+  loggedIn() {
+    return !!localStorage.getItem('user');
   }
 
-  getRecentlyPlayed(): Observable<CursorPagingObject> {
-    if (!this.user) {
-      this.user = JSON.parse(localStorage.getItem('user'));
-    }
-    return this.http.get<CursorPagingObject>("https://api.spotify.com/v1/me/player/recently-played", {
-      headers: {
-        Authorization: 'Bearer ' + this.user.access_token
-      }
-    });
-  }
+  // getCurrentPlayback() {
+  //   if (!this.user) {
+  //     this.user = JSON.parse(localStorage.getItem('user'));
+  //   }
+  //   return this.http.get("https://api.spotify.com/v1/me/player", {
+  //     headers: {
+  //       Authorization: 'Bearer ' + this.user.access_token
+  //     }
+  //   });
+  // }
+
+  // getRecentlyPlayed(): Observable<CursorPagingObject> {
+  //   if (!this.user) {
+  //     this.user = JSON.parse(localStorage.getItem('user'));
+  //   }
+  //   return this.http.get<CursorPagingObject>("https://api.spotify.com/v1/me/player/recently-played", {
+  //     headers: {
+  //       Authorization: 'Bearer ' + this.user.access_token
+  //     }
+  //   });
+  // }
 
   // Post
   createPlaylist(id: string): Observable<Playlist> {

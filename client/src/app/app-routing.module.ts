@@ -4,12 +4,13 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RoadTripPlaylistComponent } from './components/road-trip/road-trip-playlist/road-trip-playlist.component';
 import { RoadTripComponent } from './components/road-trip/road-trip/road-trip.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'roadtrip', component: RoadTripComponent },
-  { path: 'playlist', component: RoadTripPlaylistComponent },
+  { path: 'roadtrip', component: RoadTripComponent, canActivate: [AuthGuard] },
+  { path: 'playlist', component: RoadTripPlaylistComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 

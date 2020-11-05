@@ -17,9 +17,10 @@ export class RoadTripComponent implements OnInit {
 
   recentlyPlayed: PlayHistory[];
   playlistForm: FormGroup;
+  errorMessage = '';
+
   artists: Artist[];
   albums: Album[];
-
   searchResultArtist: Artist[];
   searchResultAlbum: Album[];
 
@@ -31,11 +32,19 @@ export class RoadTripComponent implements OnInit {
     this.albums = [];
   }
 
+  get duration(): FormGroup {
+    return this.playlistForm.get('duration') as FormGroup;
+  }
+
   ngOnInit(): void {
     this.playlistForm = this.fb.group({
-      duration: ['', Validators.required],
       artists: [''],
-      albums: ['']
+      albums: [''],
+      duration: this.fb.group({
+        hours: ['', [Validators.max(47), Validators.min(0)]],
+        minutes: ['', [Validators.max(59), Validators.min(0)]],
+        seconds: ['', [Validators.max(59), Validators.min(0)]]
+      })
     });
     this.playlistForm.get('artists').valueChanges.subscribe((search) => {
       this.autofill(search, 'artist');
@@ -43,6 +52,13 @@ export class RoadTripComponent implements OnInit {
     this.playlistForm.get('albums').valueChanges.subscribe((search) => {
       this.autofill(search, 'album');
     });
+
+    if (this.playlistService.artists.length > 0) {
+      this.artists = this.playlistService.artists;
+    }
+    if (this.playlistService.albums.length > 0) {
+      this.albums = this.playlistService.albums;
+    }
   }
 
   addArtist() {
@@ -54,6 +70,7 @@ export class RoadTripComponent implements OnInit {
         this.artists.push(val.artists.items[0]);
       });
     }
+    this.playlistForm.controls['artists'].setValue('');
   }
 
   addAlbum() {
@@ -65,6 +82,7 @@ export class RoadTripComponent implements OnInit {
         this.albums.push(val.albums.items[0]);
       });
     }
+    this.playlistForm.controls['albums'].setValue('');
   }
 
   removeArtist(index: number) {
@@ -76,9 +94,23 @@ export class RoadTripComponent implements OnInit {
   }
 
   save() {
-    this.playlistService.artists = this.artists;
-    this.playlistService.albums = this.albums;
-    this.router.navigate(['playlist']);
+    if (this.artists.length < 1 && this.albums.length < 1) {
+      this.errorMessage = 'Add atleast one artist or album to continue';
+    } else if (this.playlistForm.valid){
+      this.playlistService.artists = this.artists;
+      this.playlistService.albums = this.albums;
+      this.router.navigate(['playlist']);
+    }
+  }
+
+  reset() {
+    this.artists = [];
+    this.albums = [];
+    this.playlistForm.controls['artists'].setValue('');
+    this.playlistForm.controls['albums'].setValue('');
+    this.duration.controls['hours'].setValue('');
+    this.duration.controls['minutes'].setValue('');
+    this.duration.controls['seconds'].setValue('');
   }
 
   autofill(searchField: string, searchColumn: string) {
@@ -93,6 +125,14 @@ export class RoadTripComponent implements OnInit {
       this.spotifyService.searchAlbum(searchField, 5).subscribe((val) => {
         this.searchResultAlbum = val.albums.items;
       });
+    }
+  }
+
+  fitText(searchField: string, searchColumn: string) {
+    if (searchColumn === 'artists') {
+      this.playlistForm.controls['artists'].setValue(searchField);
+    } else if (searchColumn === 'albums') {
+      this.playlistForm.controls['albums'].setValue(searchField);
     }
   }
 
