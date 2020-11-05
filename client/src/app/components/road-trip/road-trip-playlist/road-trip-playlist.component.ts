@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
-import { Album } from 'src/app/models/album.model';
-import { Artist } from 'src/app/models/artist/artist.model';
 import { PagingObject } from 'src/app/models/paging-object.model';
 import { Track } from 'src/app/models/track.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
@@ -35,6 +33,7 @@ export class RoadTripPlaylistComponent implements OnInit {
       forkJoin(indices.map((a, i) => {
         return this.spotifyService.getAlbumTracks(res[a[0]].items[a[1]].id)
       })).subscribe(val => {
+        console.log(val);
         for (let i = 0; i < val.length; i ++) {
           let indexTrack = Math.floor(Math.random() * val[i].total);
           this.trackIds.push(val[i].items[indexTrack].id);

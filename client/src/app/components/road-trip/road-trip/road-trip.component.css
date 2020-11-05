@@ -1,0 +1,14 @@
+.table-data {
+    width: 90%;
+    margin-left: 50%;
+    transform: translate(-50%);
+}
+
+.table > thead > th {
+    padding: 10px;
+}
+
+.image-cover {
+    width: 64px;
+    height: 64px;
+}

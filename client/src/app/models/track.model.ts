@@ -1,5 +1,6 @@
-import { Album } from './album.model';
+import { Album } from './album/album.model';
 import { Artist } from './artist/artist.model';
+
 
 export class Track {
     album: Album;

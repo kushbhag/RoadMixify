@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Album } from '../models/album.model';
+import { AlbumSearch } from '../models/album/album-search.model';
+import { Album } from '../models/album/album.model';
 import { ArtistSearch } from '../models/artist/artist-search.model';
 import { CursorPagingObject } from '../models/cursor-paging-object.model';
 import { PagingObject } from '../models/paging-object.model';
@@ -150,6 +151,18 @@ export class SpotifyService {
     }
     let url = 'https://api.spotify.com/v1/search?type=artist&limit=' + limit.toString() + '&q=' + this.searchString(search);
     return this.http.get<ArtistSearch>(url, {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  searchAlbum(search: string, limit: number): Observable<AlbumSearch> {
+    if (!this.user) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+    }
+    let url = 'https://api.spotify.com/v1/search?type=album&limit=' + limit.toString() + '&q=' + this.searchString(search);
+    return this.http.get<AlbumSearch>(url, {
       headers: {
         Authorization: 'Bearer ' + this.user.access_token
       }

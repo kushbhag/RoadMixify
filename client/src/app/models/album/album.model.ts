@@ -1,6 +1,7 @@
-import { Artist } from './artist/artist.model';
-import { Image } from './image.model';
-import { PagingObject } from './paging-object.model';
+import { Artist } from '../artist/artist.model';
+import { Image } from '../image.model';
+import { PagingObject } from '../paging-object.model';
+
 
 export class Album {
     album_group: string;

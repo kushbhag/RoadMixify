@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Album } from '../models/album.model';
+import { Album } from '../models/album/album.model';
 import { Artist } from '../models/artist/artist.model';
 
 @Injectable({
@@ -9,8 +9,10 @@ export class PlaylistService {
 
   timeLimit: number;
   artists: Artist[];
+  albums: Album[];
 
   constructor() {
     this.artists = [];
+    this.albums = [];
   }
 }

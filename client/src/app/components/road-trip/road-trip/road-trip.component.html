@@ -7,7 +7,12 @@
             <form [formGroup]="playlistForm"
                 (ngSubmit)="save()">
                 <div class="form-group">
-                    <div class="row">
+                    <div class="form-group row">
+                        <label for=""></label>
+                        <input class="form-control" 
+                               type="time">
+                    </div>
+                    <div class="form-group row">
                         <h4 class="col-md-3">Add Artist: </h4>
                         <div class="col-md-6">
                             <input class="form-control"
@@ -16,7 +21,7 @@
                                     formControlName="artists"
                                     autocomplete="off">
                             <div class="dropdown">
-                                <div *ngFor="let s of searchResult">
+                                <div *ngFor="let s of searchResultArtist">
                                     <button type="button">{{s.name}}</button>
                                 </div>
                             </div>
@@ -27,7 +32,7 @@
                             Add Artist
                         </button>
                     </div>
-                    <div class="row">
+                    <div class="form-group row table-data">
                         <table class="table">
                             <thead>
                                 <th scope="col">Image</th>
@@ -36,14 +41,58 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let a of artists; let i=index">
-                                    <th scope="row">
-                                        <img src="{{a.images[2]?.url}}">
-                                    </th>
+                                    <td scope="row">
+                                        <img class="image-cover" src="{{a.images[2]?.url}}">
+                                    </td>
                                     <td>{{a.name}}</td>
                                     <td>
                                         <button class="btn btn-danger"
                                             type="button"
                                             (click)="removeArtist(i)">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group row">
+                        <h4 class="col-md-3">Add Album: </h4>
+                        <div class="col-md-6">
+                            <input class="form-control"
+                                    type="text"
+                                    placeholder="Album Name"
+                                    formControlName="albums"
+                                    autocomplete="off">
+                            <div class="dropdown">
+                                <div *ngFor="let s of searchResultAlbum">
+                                    <button type="button">{{s.name}}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="col-md-2 btn btn-outline-primary"
+                            type="button"
+                            (click)="addAlbum()">
+                            Add Album
+                        </button>
+                    </div>
+                    <div class="form-group row table-data">
+                        <table class="table">
+                            <thead>
+                                <th scope="col">Image</th>
+                                <th scope="col">Album</th>
+                                <th scope="col"></th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let a of albums; let i=index">
+                                    <td scope="row">
+                                        <img class="image-cover" src="{{a.images[2]?.url}}">
+                                    </td>
+                                    <td>{{a.name}}</td>
+                                    <td>
+                                        <button class="btn btn-danger"
+                                            type="button"
+                                            (click)="removeAlbum(i)">
                                             Remove
                                         </button>
                                     </td>
