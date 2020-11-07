@@ -94,6 +94,15 @@ export class SpotifyService {
     });
   }
 
+  // Creating playlist will either send in a album type or a track id
+  getAbstractTrack(item: Album | Track) {
+    if (item.type === 'album') {
+      return this.getAlbumTracks(item.id);
+    } else {
+      return this.getTrack(item.id);
+    }
+  } 
+
   getAlbumTracks(id: string): Observable<PagingObject> {
     return this.http.get<PagingObject> ("https://api.spotify.com/v1/albums/"+id+"/tracks", {
       params: {

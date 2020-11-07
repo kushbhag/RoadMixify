@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
+import { concat, forkJoin, Observable } from 'rxjs';
 import { PagingObject } from 'src/app/models/paging-object.model';
 import { Track } from 'src/app/models/track.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
@@ -24,6 +24,7 @@ export class RoadTripPlaylistComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllAlbums().subscribe((res) => {
+      console.log(res);
       let indices = [];
       for (let i = 0; i < 10; i ++) {
         let indexArtist = Math.floor(Math.random() * res.length);
@@ -31,12 +32,15 @@ export class RoadTripPlaylistComponent implements OnInit {
         indices.push([indexArtist, indexAlbum]);
       }
       forkJoin(indices.map((a, i) => {
-        return this.spotifyService.getAlbumTracks(res[a[0]].items[a[1]].id)
+        return this.spotifyService.getAbstractTrack(res[a[0]].items[a[1]])
       })).subscribe(val => {
-        console.log(val);
         for (let i = 0; i < val.length; i ++) {
-          let indexTrack = Math.floor(Math.random() * val[i].total);
-          this.trackIds.push(val[i].items[indexTrack].id);
+          if ((<PagingObject>val[i]).items !== undefined){
+            let indexTrack = Math.floor(Math.random() * (<PagingObject>val[i]).total);
+            this.trackIds.push((<PagingObject>val[i]).items[indexTrack].id);
+          } else {
+            this.trackIds.push((<Track>val[i]).id);
+          }
         }
         this.spotifyService.getTracks(this.trackIds).subscribe(tracks => {
           this.tracks = tracks.tracks;
@@ -46,10 +50,13 @@ export class RoadTripPlaylistComponent implements OnInit {
   }
 
   getAllAlbums(): Observable<Array<PagingObject>> {
-    let ret = this.playlistService.artists.map((a, index) => {
+    let art$ = this.playlistService.artists.map((a, index) => {
       return this.spotifyService.getArtistsAlbums(a.id);
     });
-    return forkJoin(ret);
+    let alb$ = this.playlistService.albums.map((a, index) => {
+      return this.spotifyService.getAlbumTracks(a.id)
+    });
+    return forkJoin([...art$, ...alb$]);
   }
 
   addPlaylist() {

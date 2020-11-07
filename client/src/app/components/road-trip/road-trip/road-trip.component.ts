@@ -94,11 +94,18 @@ export class RoadTripComponent implements OnInit {
   }
 
   save() {
-    if (this.artists.length < 1 && this.albums.length < 1) {
+    let timeDuration = Number(this.duration.controls['hours'].value) * 36000;
+    timeDuration += Number(this.duration.controls['minutes'].value) * 600;
+    timeDuration += Number(this.duration.controls['seconds'].value) * 100;
+
+    if (timeDuration === 0) {
+      this.errorMessage = 'Duration cannot be 0';
+    } else if (this.artists.length < 1 && this.albums.length < 1) {
       this.errorMessage = 'Add atleast one artist or album to continue';
     } else if (this.playlistForm.valid){
       this.playlistService.artists = this.artists;
       this.playlistService.albums = this.albums;
+      this.playlistService.duration = timeDuration;
       this.router.navigate(['playlist']);
     }
   }

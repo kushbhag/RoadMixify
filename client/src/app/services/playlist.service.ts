@@ -10,6 +10,7 @@ export class PlaylistService {
   timeLimit: number;
   artists: Artist[];
   albums: Album[];
+  duration: number;
 
   constructor() {
     this.artists = [];
