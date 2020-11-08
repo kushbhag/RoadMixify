@@ -15,37 +15,59 @@ export class RoadTripPlaylistComponent implements OnInit {
   tracks: Track[];
   trackIds: string[];
   artists: any;
+  duration: number;
+  count = 0;
 
   constructor(private playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
       this.tracks = [];
       this.trackIds = [];
+      this.duration = -10000;
   }
 
   ngOnInit(): void {
+    this.loadPlaylist();
+    console.log(this.duration);
+    console.log(this.playlistService.totalDuration);
+  }
+  
+  loadPlaylist() {
     this.getAllAlbums().subscribe((res) => {
-      console.log(res);
-      let indices = [];
-      for (let i = 0; i < 10; i ++) {
-        let indexArtist = Math.floor(Math.random() * res.length);
-        let indexAlbum = Math.floor(Math.random() * res[indexArtist].items.length);
-        indices.push([indexArtist, indexAlbum]);
-      }
-      forkJoin(indices.map((a, i) => {
-        return this.spotifyService.getAbstractTrack(res[a[0]].items[a[1]])
-      })).subscribe(val => {
-        for (let i = 0; i < val.length; i ++) {
-          if ((<PagingObject>val[i]).items !== undefined){
-            let indexTrack = Math.floor(Math.random() * (<PagingObject>val[i]).total);
-            this.trackIds.push((<PagingObject>val[i]).items[indexTrack].id);
-          } else {
-            this.trackIds.push((<Track>val[i]).id);
-          }
+      console.log(this.playlistService.totalDuration);
+      for(; this.count < 5; this.count ++) {
+        let indices = [];
+        for (let f = 0; f < 50; f ++) {
+          let indexArtist = Math.floor(Math.random() * res.length);
+          let indexAlbum = Math.floor(Math.random() * res[indexArtist].items.length);
+          indices.push([indexArtist, indexAlbum]);
         }
-        this.spotifyService.getTracks(this.trackIds).subscribe(tracks => {
-          this.tracks = tracks.tracks;
+        forkJoin(indices.map((a, k) => {
+          return this.spotifyService.getAbstractTrack(res[a[0]].items[a[1]])
+        })).subscribe(val => {
+          let tempTrackIds = [];
+          for (let i = 0; i < val.length; i ++) {
+            if (this.duration >= this.playlistService.totalDuration) {
+              break;
+            }
+            if ((<PagingObject>val[i]).items !== undefined){
+              let indexTrack = Math.floor(Math.random() * (<PagingObject>val[i]).total);
+              this.trackIds.push((<PagingObject>val[i]).items[indexTrack].id);
+              tempTrackIds.push((<PagingObject>val[i]).items[indexTrack].id);
+              this.duration += (<PagingObject>val[i]).items[indexTrack].duration_ms;
+            } else {
+              this.trackIds.push((<Track>val[i]).id);
+              tempTrackIds.push((<Track>val[i]).id);
+              this.duration += (<Track>val[i]).duration_ms;
+            }
+          }
+          console.log(this.duration);
+          if (this.duration >= this.playlistService.totalDuration && tempTrackIds.length > 0) {
+            this.spotifyService.getTracks(tempTrackIds).subscribe(tracks => {
+              this.tracks.push(...tracks.tracks);
+            });
+          }
         });
-      });
+      }
     });
   }
 

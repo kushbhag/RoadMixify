@@ -59,6 +59,9 @@ export class RoadTripComponent implements OnInit {
     if (this.playlistService.albums.length > 0) {
       this.albums = this.playlistService.albums;
     }
+    this.duration.controls['hours'].setValue(this.playlistService.timeDuration[0]);
+    this.duration.controls['minutes'].setValue(this.playlistService.timeDuration[1]);
+    this.duration.controls['seconds'].setValue(this.playlistService.timeDuration[2]);
   }
 
   addArtist() {
@@ -94,9 +97,19 @@ export class RoadTripComponent implements OnInit {
   }
 
   save() {
-    let timeDuration = Number(this.duration.controls['hours'].value) * 36000;
-    timeDuration += Number(this.duration.controls['minutes'].value) * 600;
-    timeDuration += Number(this.duration.controls['seconds'].value) * 100;
+    let timeDuration = 0;
+    if (Number(this.duration.controls['hours'].value)) {
+      timeDuration += Number(this.duration.controls['hours'].value) * 3600000;
+    }
+    if (Number(this.duration.controls['minutes'].value)) {
+      timeDuration += Number(this.duration.controls['minutes'].value) * 60000;
+    }
+    if (Number(this.duration.controls['seconds'].value)) {
+      timeDuration += Number(this.duration.controls['seconds'].value) * 1000;
+    }
+    this.playlistService.timeDuration[0] = this.duration.controls['hours'].value;
+    this.playlistService.timeDuration[1] = this.duration.controls['minutes'].value;
+    this.playlistService.timeDuration[2] = this.duration.controls['seconds'].value;
 
     if (timeDuration === 0) {
       this.errorMessage = 'Duration cannot be 0';
@@ -105,7 +118,7 @@ export class RoadTripComponent implements OnInit {
     } else if (this.playlistForm.valid){
       this.playlistService.artists = this.artists;
       this.playlistService.albums = this.albums;
-      this.playlistService.duration = timeDuration;
+      this.playlistService.totalDuration = timeDuration;
       this.router.navigate(['playlist']);
     }
   }

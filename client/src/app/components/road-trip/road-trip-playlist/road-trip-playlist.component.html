@@ -1,17 +1,37 @@
-<ul class="list-group">
-    <li class="list-group-item" *ngFor="let track of tracks">
-        <div class="row">
-            <div class="col-md-3">
+<table class="table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let track of tracks">
+            <td>
                 <img src="{{track.album.images[2].url}}">
-            </div>
-            <div class="col-md-9">
-                <h5>
-                    {{track.name}}
-                </h5>
-            </div>
-        </div>
-    </li>
-</ul>
-<button class="button button-primary" (click)="addPlaylist()">
+            </td>
+            <td>{{track.name}}</td>
+            <td>
+                <div *ngFor="let artist of track.artists">
+                    {{artist.name}}
+                </div>
+            </td>
+            <td>{{track.duration_ms | date:'mm:ss'}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+                Total Songs: {{tracks.length}}
+            </td>
+            <td>
+                Total Duration: {{ duration | date:'H:mm:ss'}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<button class="btn btn-primary" (click)="addPlaylist()">
     Add Playlist
 </button>
