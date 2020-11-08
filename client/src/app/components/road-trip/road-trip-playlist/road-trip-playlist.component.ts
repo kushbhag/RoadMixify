@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { concat, forkJoin, Observable } from 'rxjs';
 import { PagingObject } from 'src/app/models/paging-object.model';
 import { Track } from 'src/app/models/track.model';
@@ -12,8 +12,9 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 })
 export class RoadTripPlaylistComponent implements OnInit {
 
+  @ViewChild('playlistName') playlistName: ElementRef;
+
   tracks: Track[];
-  trackIds: string[];
   artists: any;
   duration: number;
   count = 0;
@@ -21,19 +22,15 @@ export class RoadTripPlaylistComponent implements OnInit {
   constructor(private playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
       this.tracks = [];
-      this.trackIds = [];
-      this.duration = -10000;
+      this.duration = 0;
   }
 
   ngOnInit(): void {
     this.loadPlaylist();
-    console.log(this.duration);
-    console.log(this.playlistService.totalDuration);
   }
   
   loadPlaylist() {
     this.getAllAlbums().subscribe((res) => {
-      console.log(this.playlistService.totalDuration);
       for(; this.count < 5; this.count ++) {
         let indices = [];
         for (let f = 0; f < 50; f ++) {
@@ -51,16 +48,13 @@ export class RoadTripPlaylistComponent implements OnInit {
             }
             if ((<PagingObject>val[i]).items !== undefined){
               let indexTrack = Math.floor(Math.random() * (<PagingObject>val[i]).total);
-              this.trackIds.push((<PagingObject>val[i]).items[indexTrack].id);
               tempTrackIds.push((<PagingObject>val[i]).items[indexTrack].id);
               this.duration += (<PagingObject>val[i]).items[indexTrack].duration_ms;
             } else {
-              this.trackIds.push((<Track>val[i]).id);
               tempTrackIds.push((<Track>val[i]).id);
               this.duration += (<Track>val[i]).duration_ms;
             }
           }
-          console.log(this.duration);
           if (this.duration >= this.playlistService.totalDuration && tempTrackIds.length > 0) {
             this.spotifyService.getTracks(tempTrackIds).subscribe(tracks => {
               this.tracks.push(...tracks.tracks);
@@ -82,11 +76,27 @@ export class RoadTripPlaylistComponent implements OnInit {
   }
 
   addPlaylist() {
+    if (this.playlistName.nativeElement.value === '') {
+      this.playlistName.nativeElement.value = 'Road Trip Playlist';
+    }
     this.spotifyService.getUser().subscribe(val => {
-      this.spotifyService.createPlaylist(val.id).subscribe((x) => {
-        this.spotifyService.addToPlaylist(x.id, this.trackIds).subscribe();
+      this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value).subscribe((x) => {
+        this.spotifyService.addToPlaylist(x.id, this.getTrackIds()).subscribe();
       });
     });
+  }
+
+  getTrackIds(): Array<string> {
+    let trackIds = [];
+    for (let track of this.tracks) {
+      trackIds.push(track.id);
+    }
+    return trackIds;
+  }
+
+  removeTrack(index: number) {
+    let deleted = this.tracks.splice(index, 1);
+    this.duration -= deleted[0].duration_ms;
   }
 
 }

@@ -5,20 +5,22 @@
             <th>Title</th>
             <th>Artist</th>
             <th>Duration</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let track of tracks">
+        <tr *ngFor="let track of tracks;let j=index">
             <td>
                 <img src="{{track.album.images[2].url}}">
             </td>
             <td>{{track.name}}</td>
             <td>
-                <div *ngFor="let artist of track.artists">
-                    {{artist.name}}
-                </div>
+                <ng-container *ngFor="let artist of track.artists; let i=index">{{artist.name}}<ng-container *ngIf="i < track.artists.length-1">, </ng-container></ng-container>
             </td>
             <td>{{track.duration_ms | date:'mm:ss'}}</td>
+            <td>
+                <button class="btn btn-danger" (click)="removeTrack(j)">Remove</button>
+            </td>
         </tr>
         <tr>
             <td></td>
@@ -27,11 +29,21 @@
                 Total Songs: {{tracks.length}}
             </td>
             <td>
-                Total Duration: {{ duration | date:'H:mm:ss'}}
+                Total Duration: {{ duration + 18000000 | date:'H:mm:ss'}}
             </td>
         </tr>
     </tbody>
 </table>
-<button class="btn btn-primary" (click)="addPlaylist()">
-    Add Playlist
-</button>
+<div class="p-3">
+    <div class="form-group row">
+        <div class="col-md-2">
+            <label for="playlistName" class="h3">Playlist Name:</label>
+        </div>
+        <div class="col-md-4">
+            <input #playlistName type="text" class="form-control" id="playlistName" placeholder="Road Trip Playlist">
+        </div>
+    </div>
+    <button class="btn btn-primary" (click)="addPlaylist()">
+        Add Playlist
+    </button>
+</div>
