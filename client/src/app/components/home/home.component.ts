@@ -9,10 +9,12 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private spotifyService: SpotifyService) { }
+  constructor(public spotifyService: SpotifyService) { }
 
   ngOnInit(): void {
-    var users = this.getHashParams();
+    if (!this.spotifyService.loggedIn()) {
+      this.getHashParams();
+    }
   }
 
   getHashParams() {
@@ -27,8 +29,10 @@ export class HomeComponent implements OnInit {
       }
     }
     localStorage.removeItem('user');
-    localStorage.setItem('user', JSON.stringify(tempUser));
-    this.spotifyService.user = tempUser;
+    if (tempUser.access_token !== undefined) {
+      localStorage.setItem('user', JSON.stringify(tempUser));
+      this.spotifyService.user = tempUser;
+    }
   }
 
 }

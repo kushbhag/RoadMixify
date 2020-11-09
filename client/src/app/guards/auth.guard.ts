@@ -15,7 +15,8 @@ export class AuthGuard implements CanActivate {
     if (this.spotifyService.loggedIn()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      window.location.href = 'https://road-mixify-server.herokuapp.com/login';
+      // this.router.navigate(['/home']);
       return false;
     }
   }
