@@ -15,6 +15,8 @@ import { PlaylistService } from './services/playlist.service';
 import { AuthGuard } from './guards/auth.guard';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { PostPlaylistComponent } from './components/post-playlist/post-playlist.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { PostPlaylistComponent } from './components/post-playlist/post-playlist.
     RoadTripComponent,
     LoginComponent,
     RoadTripPlaylistComponent,
-    PostPlaylistComponent
+    PostPlaylistComponent,
+    HeaderComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,

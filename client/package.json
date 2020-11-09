@@ -23,6 +23,7 @@
     "angular-cli-ghpages": "^0.6.2",
     "angular-spotify": "^1.5.1",
     "bootstrap": "^4.5.3",
+    "jquery": "^3.5.1",
     "ngx-pagination": "^5.0.0",
     "rxjs": "^6.6.3",
     "tslib": "^2.0.0",
