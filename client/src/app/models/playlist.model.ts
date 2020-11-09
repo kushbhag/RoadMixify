@@ -5,6 +5,7 @@ import { User } from './user.model';
 export class Playlist {
     collaborative: boolean;
     description: string;
+    external_urls: any;
     href: string;
     id: string;
     images: Image[];

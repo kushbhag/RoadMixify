@@ -9,9 +9,10 @@
     </div>
 </ng-container>
 <ng-container *ngIf="tracks.length > 0">
-    <table class="table">
+    <table class="table" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
+                <th *ngIf="refresh" span="1" style="width: 5%;"></th>
                 <th>Image</th>
                 <th>Title</th>
                 <th>Artist</th>
@@ -23,6 +24,9 @@
             <tr *ngFor="let j=index;let track of tracks | paginate: { itemsPerPage: 10,
                                                                       currentPage: currPage,
                                                                       totalItems: tracks.length}">
+                <td *ngIf="refresh" style="margin-left: 10px; width: 5%;">
+                    <input type="checkbox" [checked]="inRefreshList(track)" (change)="addToRefresh($event, track, j)">
+                </td>
                 <td>
                     <img src="{{track.album.images[2].url}}">
                 </td>
@@ -38,30 +42,42 @@
             <tr>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td>
                     Total Songs: {{tracks.length}}
                 </td>
                 <td>
-                    Total Duration: {{ duration + 18000000 | date:'H:mm:ss'}}
+                    Total Duration: {{ duration + 18000000 | date:'HH:mm:ss'}}
                 </td>
+                <!-- <td *ngIf="refresh"></td> -->
             </tr>
         </tbody>
-        <pagination-controls (pageChange)="currPage = $event"></pagination-controls>
     </table>
+    <pagination-controls (pageChange)="currPage = $event"></pagination-controls>
     <div class="p-3">
-        <div class="form-group row">
-            <div class="col-md-2">
-                <label for="playlistName" class="h3">Playlist Name:</label>
+        <ng-container *ngIf="!refresh">
+            <div class="form-group row">
+                <div class="col-md-2">
+                    <label for="playlistName" class="h3">Playlist Name:</label>
+                </div>
+                <div class="col-md-4">
+                    <input #playlistName type="text" class="form-control" id="playlistName" placeholder="Road Trip Playlist">
+                </div>
             </div>
-            <div class="col-md-4">
-                <input #playlistName type="text" class="form-control" id="playlistName" placeholder="Road Trip Playlist">
-            </div>
-        </div>
-        <button class="btn btn-primary" (click)="addPlaylist()">
-            Add Playlist
-        </button>
-        <button class="btn btn-danger" (click)="refresh()">
-            Refresh Playlist
-        </button>
+            <button class="btn btn-primary" (click)="addPlaylist()" [routerLink]="'/final'">
+                Add Playlist
+            </button>
+            <button class="btn btn-danger" (click)="refresh = true">
+                Refresh Playlist
+            </button>
+        </ng-container>
+        <ng-container *ngIf="refresh">
+            <button class="btn btn-secondary" (click)="refresh = false">
+                Cancel Refresh
+            </button>
+            <button class="btn btn-danger" (click)="hardRefresh()">
+                Confirm Refresh Playlist
+            </button>
+        </ng-container>
     </div>
 </ng-container>

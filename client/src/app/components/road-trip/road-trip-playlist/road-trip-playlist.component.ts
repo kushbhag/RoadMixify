@@ -15,15 +15,17 @@ export class RoadTripPlaylistComponent implements OnInit {
   @ViewChild('playlistName') playlistName: ElementRef;
 
   tracks: Track[];
+  refreshTracks: Track[];
   duration: number;
 
   currPage = 1;
   count = 0;
-  refreshing = false;
+  refresh = false;
 
   constructor(private playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
       this.tracks = [];
+      this.refreshTracks = [];
       this.duration = 0;
   }
 
@@ -31,7 +33,8 @@ export class RoadTripPlaylistComponent implements OnInit {
     this.loadPlaylist();
   }
   
-  loadPlaylist() {
+  loadPlaylist(): void {
+    this.refresh = false;
     this.getAllAlbums().subscribe((res) => {
       for(; this.count < 5; this.count ++) {
         let indices = [];
@@ -67,13 +70,6 @@ export class RoadTripPlaylistComponent implements OnInit {
     });
   }
 
-  refresh() {
-    this.tracks = [];
-    this.duration = 0;
-    this.count = 0;
-    this.loadPlaylist();
-  }
-
   getAllAlbums(): Observable<Array<PagingObject>> {
     let art$ = this.playlistService.artists.map((a, index) => {
       return this.spotifyService.getArtistsAlbums(a.id);
@@ -84,13 +80,14 @@ export class RoadTripPlaylistComponent implements OnInit {
     return forkJoin([...art$, ...alb$]);
   }
 
-  addPlaylist() {
+  addPlaylist(): void {
     if (this.playlistName.nativeElement.value === '') {
       this.playlistName.nativeElement.value = 'Road Trip Playlist';
     }
     this.spotifyService.getUser().subscribe(val => {
-      this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value).subscribe((x) => {
-        this.spotifyService.addToPlaylist(x.id, this.getTrackIds()).subscribe();
+      this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value).subscribe((play) => {
+        this.playlistService.playListLink = play.external_urls.spotify;
+        this.spotifyService.addToPlaylist(play.id, this.getTrackIds()).subscribe();
       });
     });
   }
@@ -103,9 +100,32 @@ export class RoadTripPlaylistComponent implements OnInit {
     return trackIds;
   }
 
-  removeTrack(index: number) {
+  removeTrack(index: number): void {
     let deleted = this.tracks.splice(index, 1);
     this.duration -= deleted[0].duration_ms;
+  }
+
+  hardRefresh(): void {
+    this.tracks = this.refreshTracks;
+    this.refreshTracks = [];
+    this.duration = 0;
+    this.count = 0;
+    for (let t of this.tracks) {
+      this.duration += t.duration_ms;
+    }
+    this.loadPlaylist();
+  }
+
+  addToRefresh(e, track: Track): void {
+    if (e.currentTarget.checked === true) {
+      this.refreshTracks.push(track);
+    } else {
+      this.refreshTracks = this.refreshTracks.filter(val => val.name !== track.name);
+    }
+  }
+
+  inRefreshList(track: Track): boolean {
+    return !!this.refreshTracks.find(val => val.name === track.name);
   }
 
 }

@@ -12,6 +12,7 @@ export class PlaylistService {
   albums: Album[];
   timeDuration = [];
   totalDuration: number;
+  playListLink: string;
 
   constructor() {
     this.artists = [];
