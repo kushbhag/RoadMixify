@@ -15,9 +15,11 @@ export class RoadTripPlaylistComponent implements OnInit {
   @ViewChild('playlistName') playlistName: ElementRef;
 
   tracks: Track[];
-  artists: any;
   duration: number;
+
+  currPage = 1;
   count = 0;
+  refreshing = false;
 
   constructor(private playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
@@ -63,6 +65,13 @@ export class RoadTripPlaylistComponent implements OnInit {
         });
       }
     });
+  }
+
+  refresh() {
+    this.tracks = [];
+    this.duration = 0;
+    this.count = 0;
+    this.loadPlaylist();
   }
 
   getAllAlbums(): Observable<Array<PagingObject>> {

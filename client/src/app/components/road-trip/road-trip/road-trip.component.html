@@ -52,19 +52,12 @@
                                     autocomplete="off">
                             <div class="dropdown">
                                 <div *ngFor="let s of searchResultArtist">
-                                    <button (click)="fitText(s.name, 'artists')" class="form-control" type="button"  style="height:auto;">
+                                    <button (click)="addArtist(s)" class="form-control" type="button"  style="height:auto;">
                                         <img class="image-search" src="{{s.images[2]?.url}}">
                                         {{s.name}}
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-outline-primary col-12"
-                                type="button"
-                                (click)="addArtist()">
-                                Add Artist
-                            </button>
                         </div>
                     </div>
                     <div class="form-group row table-data">
@@ -101,19 +94,12 @@
                                     autocomplete="off">
                             <div class="dropdown">
                                 <div *ngFor="let s of searchResultAlbum">
-                                    <button (click)="fitText(s.name, 'albums')" class="form-control" type="button" style="height:auto;">
+                                    <button (click)="addAlbum(s)" class="form-control" type="button" style="height:auto;">
                                         <img class="image-search" src="{{s.images[2]?.url}}">
                                         {{s.name}}
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-outline-primary col-12"
-                                type="button"
-                                (click)="addAlbum()">
-                                Add Album
-                            </button>
                         </div>
                     </div>
                     <div class="form-group row table-data">

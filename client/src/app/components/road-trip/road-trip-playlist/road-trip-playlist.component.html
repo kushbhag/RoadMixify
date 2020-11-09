@@ -1,49 +1,67 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Artist</th>
-            <th>Duration</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let track of tracks;let j=index">
-            <td>
-                <img src="{{track.album.images[2].url}}">
-            </td>
-            <td>{{track.name}}</td>
-            <td>
-                <ng-container *ngFor="let artist of track.artists; let i=index">{{artist.name}}<ng-container *ngIf="i < track.artists.length-1">, </ng-container></ng-container>
-            </td>
-            <td>{{track.duration_ms | date:'mm:ss'}}</td>
-            <td>
-                <button class="btn btn-danger" (click)="removeTrack(j)">Remove</button>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td>
-                Total Songs: {{tracks.length}}
-            </td>
-            <td>
-                Total Duration: {{ duration + 18000000 | date:'H:mm:ss'}}
-            </td>
-        </tr>
-    </tbody>
-</table>
-<div class="p-3">
-    <div class="form-group row">
-        <div class="col-md-2">
-            <label for="playlistName" class="h3">Playlist Name:</label>
-        </div>
-        <div class="col-md-4">
-            <input #playlistName type="text" class="form-control" id="playlistName" placeholder="Road Trip Playlist">
-        </div>
+<ng-container *ngIf="tracks.length === 0">
+    <div style="position: absolute; left: 50%;
+                transform: translate(-50%); height: 120px;
+                width: 120px; text-align: center; top: 30%;">
+        <label for="loader">
+            <h3>Loading Playlist</h3>
+        </label>
+        <div id="loader" class="loader"></div>
     </div>
-    <button class="btn btn-primary" (click)="addPlaylist()">
-        Add Playlist
-    </button>
-</div>
+</ng-container>
+<ng-container *ngIf="tracks.length > 0">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Duration</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let j=index;let track of tracks | paginate: { itemsPerPage: 10,
+                                                                      currentPage: currPage,
+                                                                      totalItems: tracks.length}">
+                <td>
+                    <img src="{{track.album.images[2].url}}">
+                </td>
+                <td>{{track.name}}</td>
+                <td>
+                    <ng-container *ngFor="let artist of track.artists; let i=index">{{artist.name}}<ng-container *ngIf="i < track.artists.length-1">, </ng-container></ng-container>
+                </td>
+                <td>{{track.duration_ms | date:'mm:ss'}}</td>
+                <td>
+                    <button class="btn btn-danger" (click)="removeTrack(j)">Remove</button>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    Total Songs: {{tracks.length}}
+                </td>
+                <td>
+                    Total Duration: {{ duration + 18000000 | date:'H:mm:ss'}}
+                </td>
+            </tr>
+        </tbody>
+        <pagination-controls (pageChange)="currPage = $event"></pagination-controls>
+    </table>
+    <div class="p-3">
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label for="playlistName" class="h3">Playlist Name:</label>
+            </div>
+            <div class="col-md-4">
+                <input #playlistName type="text" class="form-control" id="playlistName" placeholder="Road Trip Playlist">
+            </div>
+        </div>
+        <button class="btn btn-primary" (click)="addPlaylist()">
+            Add Playlist
+        </button>
+        <button class="btn btn-danger" (click)="refresh()">
+            Refresh Playlist
+        </button>
+    </div>
+</ng-container>

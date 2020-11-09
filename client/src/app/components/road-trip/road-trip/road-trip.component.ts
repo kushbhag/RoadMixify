@@ -64,28 +64,18 @@ export class RoadTripComponent implements OnInit {
     this.duration.controls['seconds'].setValue(this.playlistService.timeDuration[2]);
   }
 
-  addArtist() {
-    const find = this.searchResultArtist.find(element => element.name === this.playlistForm.get('artists').value);
-    if (find !== undefined) {
-      this.artists.push(find);
-    } else {
-      this.spotifyService.searchArtist(this.playlistForm.get('artists').value, 1).subscribe((val) => {
-        this.artists.push(val.artists.items[0]);
-      });
+  addArtist(artist: Artist) {
+    if (artist !== undefined) {
+      this.artists.push(artist);
+      this.playlistForm.controls['artists'].setValue('');
     }
-    this.playlistForm.controls['artists'].setValue('');
   }
 
-  addAlbum() {
-    const find = this.searchResultAlbum.find(element => element.name === this.playlistForm.get('albums').value);
-    if (find !== undefined) {
-      this.albums.push(find);
-    } else {
-      this.spotifyService.searchAlbum(this.playlistForm.get('albums').value, 1).subscribe((val) => {
-        this.albums.push(val.albums.items[0]);
-      });
+  addAlbum(album: Album) {
+    if (album !== undefined) {
+      this.albums.push(album);
+      this.playlistForm.controls['albums'].setValue('');
     }
-    this.playlistForm.controls['albums'].setValue('');
   }
 
   removeArtist(index: number) {

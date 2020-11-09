@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RoadTripPlaylistComponent } from './components/road-trip/road-trip-playlist/road-trip-playlist.component';
 import { PlaylistService } from './services/playlist.service';
 import { AuthGuard } from './guards/auth.guard';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { AuthGuard } from './guards/auth.guard';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxPaginationModule
   ],
   providers: [
     SpotifyService,
