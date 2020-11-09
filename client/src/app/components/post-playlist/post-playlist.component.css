@@ -1,0 +1,9 @@
+.card {
+    margin-top: 20px;
+    max-width: 960px;
+    min-height: 300px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: rgb(40, 40, 40);
+  }

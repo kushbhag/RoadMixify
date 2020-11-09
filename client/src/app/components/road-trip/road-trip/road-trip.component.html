@@ -1,7 +1,9 @@
 <div class="container">
-    <div class="card">
-        <div class="card-header">
-            Road Trip Playlist
+    <div class="card border-secondary">
+        <div class="card-header border-secondary">
+            <h2>
+                Road Trip Playlist
+            </h2>
         </div>
         <div class="card-body">
             <form [formGroup]="playlistForm"
@@ -9,9 +11,10 @@
                 <div class="form-group">
                     <div formGroupName="duration">
                         <div class="form-group row">
-                            <h4 class="col-md-2">Duration:</h4>
+                            <h4 class="col-lg-2">Duration:</h4>
                             <div class="col-4 col-md-3">
-                                <input formControlName="hours" class="form-control" type="number" id="hours" placeholder="0"
+                                <input formControlName="hours" class="form-control form-input text-light border-dark" 
+                                       type="number" id="hours" placeholder="0"
                                        [ngClass]="{'is-invalid': !duration.controls.hours.valid}">
                                 <label for="hours">Hours</label>
                                 <span class="invalid-feedback">
@@ -21,7 +24,8 @@
                                 </span>
                             </div>
                             <div class="col-4 col-md-3">
-                                <input formControlName="minutes" class="form-control" type="number" id="minutes" placeholder="0"
+                                <input formControlName="minutes" class="form-control form-input text-light border-dark"
+                                       type="number" id="minutes" placeholder="0"
                                        [ngClass]="{'is-invalid': !duration.controls.minutes.valid}">
                                 <label for="minutes">Minutes</label>
                                 <span class="invalid-feedback">
@@ -31,7 +35,8 @@
                                 </span>
                             </div>
                             <div class="col-4 col-md-3">
-                                <input formControlName="seconds" class="form-control" type="number" id="seconds" placeholder="0"
+                                <input formControlName="seconds" class="form-control form-input text-light border-dark" 
+                                       type="number" id="seconds" placeholder="0"
                                        [ngClass]="{'is-invalid': !duration.controls.seconds.valid}">
                                 <label for="seconds">Seconds</label>
                                 <span class="invalid-feedback">
@@ -45,14 +50,15 @@
                     <div class="form-group row">
                         <h4 class="col-md-2">Add Artist: </h4>
                         <div class="col-md-7">
-                            <input class="form-control"
+                            <input class="form-control form-input text-light border-dark"
                                     type="text"
                                     placeholder="Artist Name"
                                     formControlName="artists"
                                     autocomplete="off">
                             <div class="dropdown">
                                 <div *ngFor="let s of searchResultArtist">
-                                    <button (click)="addArtist(s)" class="form-control" type="button"  style="height:auto;">
+                                    <button (click)="addArtist(s)" class="form-control form-input text-light border-dark"
+                                        type="button"  style="height:auto;">
                                         <img class="image-search" src="{{s.images[2]?.url}}">
                                         {{s.name}}
                                     </button>
@@ -61,7 +67,7 @@
                         </div>
                     </div>
                     <div class="form-group row table-data">
-                        <table *ngIf="artists.length > 0" class="table">
+                        <table *ngIf="artists.length > 0" class="table table-dark">
                             <thead>
                                 <th scope="col">Image</th>
                                 <th scope="col">Artist</th>
@@ -87,14 +93,15 @@
                     <div class="form-group row">
                         <h4 class="col-md-2">Add Album: </h4>
                         <div class="col-md-7">
-                            <input class="form-control"
+                            <input class="form-control form-input text-light border-dark"
                                     type="text"
                                     placeholder="Album Name"
                                     formControlName="albums"
                                     autocomplete="off">
                             <div class="dropdown">
                                 <div *ngFor="let s of searchResultAlbum">
-                                    <button (click)="addAlbum(s)" class="form-control" type="button" style="height:auto;">
+                                    <button (click)="addAlbum(s)" class="form-control form-input text-light border-dark"
+                                        type="button" style="height:auto;">
                                         <img class="image-search" src="{{s.images[2]?.url}}">
                                         {{s.name}}
                                     </button>
@@ -103,7 +110,7 @@
                         </div>
                     </div>
                     <div class="form-group row table-data">
-                        <table *ngIf="albums.length > 0" class="table">
+                        <table *ngIf="albums.length > 0" class="table table-dark">
                             <thead>
                                 <th scope="col">Image</th>
                                 <th scope="col">Album</th>
@@ -129,19 +136,23 @@
                 </div>
                 <div class="form-group row">
                     <div *ngIf="errorMessage !== ''" class="col-12">
-                        <div class="alert alert-secondary" role="alert">
+                        <div class="alert alert-danger" role="alert">
                             {{errorMessage}}
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary"
-                        type="submit"
-                        [title]="'Submit'">
-                    Submit
-                </button>
-                <button type="button" class="btn btn-danger" (click)="reset()">
-                    Reset
-                </button>
+                <div class="form-group">
+                    <button class="btn btn-success"
+                            type="submit"
+                            [title]="'Submit'">
+                        Submit
+                    </button>
+                    <button type="button"
+                            class="btn btn-danger"
+                            (click)="reset()">
+                        Reset
+                    </button>
+                </div>
             </form>
         </div>
     </div>

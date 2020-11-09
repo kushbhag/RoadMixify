@@ -1,9 +1,9 @@
-<div class="container">
-    <div class="card">
-        <h4>See your playlist here</h4>
-        <a href="{{playlistService.playListLink}}">{{playlistService.playListLink}}</a>
-    </div>
-    <button class="btn btn-primary" [routerLink]="'home'">
+
+<div class="card text-light">
+    <h2>Your playlist was created!</h2>
+    <h4>See your playlist here</h4>
+    <a class="text-success" href="{{playlistService.playListLink}}">{{playlistService.playListLink}}</a>
+    <button class="btn btn-success mt-4" [routerLink]="'/home'">
         Back to Home
     </button>
 </div>
