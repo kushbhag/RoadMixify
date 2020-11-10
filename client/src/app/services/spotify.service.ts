@@ -153,6 +153,17 @@ export class SpotifyService {
     });
   }
 
+  refresh() {
+    return this.http.post("https://api.spotify.com/v1/", {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      params: {
+        refresh_token: this.user.refresh_token
+      }
+    })
+  }
+
   // Searches
   searchString (search: string): string {
     return search.split(' ').join('%20');

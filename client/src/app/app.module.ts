@@ -7,7 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { SpotifyService } from './services/spotify.service';
 import { RoadTripComponent } from './components/road-trip/road-trip/road-trip.component';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http'
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http'
 import { ReactiveFormsModule } from '@angular/forms';
 import { RoadTripPlaylistComponent } from './components/road-trip/road-trip-playlist/road-trip-playlist.component';
 import { PlaylistService } from './services/playlist.service';
@@ -16,6 +16,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { PostPlaylistComponent } from './components/post-playlist/post-playlist.component';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,12 @@ import { FooterComponent } from './components/footer/footer.component';
   providers: [
     SpotifyService,
     PlaylistService,
-    AuthGuard
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
