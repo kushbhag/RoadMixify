@@ -1,9 +1,13 @@
 
 <div class="card text-light">
     <h2>Your playlist was created!</h2>
-    <h4>See your playlist here</h4>
-    <a class="text-success" href="{{playlistService.playListLink}}">{{playlistService.playListLink}}</a>
-    <button class="btn btn-success mt-4" [routerLink]="'/home'">
+    <h5>It can be found on your spotify account 
+        <a *ngIf="playlistService.playListLink"
+            class="text-success" href="{{playlistService.playListLink}}">
+            or click here
+        </a>
+    </h5>
+    <button class="btn btn-success mt-2" [routerLink]="'/home'">
         Back to Home
     </button>
 </div>
