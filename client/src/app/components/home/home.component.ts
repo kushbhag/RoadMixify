@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  getHashParams() {
+  getHashParams(): void{
     var tempUser = new User();
     var e, r = /([^&;=]+)=?([^&;]*)/g,
         q = window.location.hash.substring(1);
@@ -33,6 +33,10 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('user', JSON.stringify(tempUser));
       this.spotifyService.user = tempUser;
     }
+  }
+
+  login(): void {
+    window.location.href = 'https://road-mixify-server.herokuapp.com/login';
   }
 
 }

@@ -53,7 +53,7 @@
     <ng-container *ngIf="!spotifyService.loggedIn()">
       <h5>To get started, login to your spotify account</h5>
       <div class="card-container">
-        <button class="btn btn-success" href="https://road-mixify-server.herokuapp.com/login" style="min-width: 300px; min-height: 50px;">
+        <button class="btn btn-success" (click)="login()" style="min-width: 300px; min-height: 50px;">
           <h5>Login</h5>
         </button>
       </div>
