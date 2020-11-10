@@ -57,10 +57,7 @@
                 </tbody>
             </table>
         </div>
-        <div style="position: relative; width: auto; align-items: center; left: 50%; transform: translate(-50%);">
-            <pagination-controls class="text-light" (pageChange)="currPage = $event">
-            </pagination-controls>
-        </div>
+        <pagination-controls class="text-light" (pageChange)="currPage = $event"></pagination-controls>
         <div class="p-3 text-light">
             <ng-container *ngIf="!refresh">
                 <div class="form-group row">
@@ -72,12 +69,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-4">
                         <button class="btn btn-success bottom-button" (click)="addPlaylist()" [routerLink]="'/final'">
                             Add Playlist
                         </button>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-4">
                         <button class="btn btn-danger bottom-button" (click)="refresh = true">
                             Refresh Playlist
                         </button>
@@ -89,12 +86,12 @@
                     Select any song you wish to keep even after the refresh, and then click Confirm Refresh
                 </div>
                 <div class="row">
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-4">
                         <button class="btn btn-secondary bottom-button" (click)="refresh = false">
                             Cancel Refresh
                         </button>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-4">
                         <button class="btn btn-danger bottom-button" (click)="hardRefresh()">
                             Confirm Refresh
                         </button>

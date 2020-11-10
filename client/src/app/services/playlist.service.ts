@@ -7,7 +7,6 @@ import { Artist } from '../models/artist/artist.model';
 })
 export class PlaylistService {
 
-  timeLimit: number;
   artists: Artist[];
   albums: Album[];
   timeDuration = [];

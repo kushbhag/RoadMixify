@@ -10,6 +10,11 @@ export class PostPlaylistComponent implements OnInit {
 
   constructor(public playlistService: PlaylistService) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.playlistService.albums = [];
+    this.playlistService.artists = [];
+    this.playlistService.timeDuration = [];
+    this.playlistService.totalDuration = 0;
+  }
 
 }

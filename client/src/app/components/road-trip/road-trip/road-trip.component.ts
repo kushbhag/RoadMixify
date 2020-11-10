@@ -41,7 +41,7 @@ export class RoadTripComponent implements OnInit {
       artists: [''],
       albums: [''],
       duration: this.fb.group({
-        hours: ['', [Validators.max(47), Validators.min(0)]],
+        hours: ['', [Validators.max(23), Validators.min(0)]],
         minutes: ['', [Validators.max(59), Validators.min(0)]],
         seconds: ['', [Validators.max(59), Validators.min(0)]]
       })
