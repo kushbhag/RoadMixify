@@ -64,9 +64,9 @@ export class RoadTripPlaylistComponent implements OnInit {
               if (this.duration >= this.playlistService.totalDuration) {
                 break;
               } else {
-                if (!trackSet.has(track.id)) {
+                if (!trackSet.has(track.name)) {
                   this.duration += track.duration_ms;
-                  trackSet.add(track.id);
+                  trackSet.add(track.name);
                   this.tracks.push(track);
                 }
               }
