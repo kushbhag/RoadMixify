@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { PagingObject } from 'src/app/models/paging-object.model';
 import { Track } from 'src/app/models/track.model';
+import { Tracks } from 'src/app/models/tracks.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
 import { SpotifyService } from 'src/app/services/spotify.service';
 
@@ -49,14 +50,22 @@ export class RoadTripPlaylistComponent implements OnInit {
         forkJoin(val.map((arr, index) =>{
           let tempTrackIds = [];
           for (let i = 0; i < arr.length; i ++) {
-            if ((<PagingObject>arr[i]).items !== undefined){
-              let indexTrack = Math.floor(Math.random() * (<PagingObject>arr[i]).total);
+            if (arr[i] === undefined) {
+              continue;
+            } else if ((<PagingObject>arr[i]).items !== undefined){
+              let indexTrack = Math.floor(Math.random() * (<PagingObject>arr[i]).items.length);
               tempTrackIds.push((<PagingObject>arr[i]).items[indexTrack].id);
             } else {
               tempTrackIds.push((<Track>arr[i]).id);;
             }
           }
-          return this.spotifyService.getTracks(tempTrackIds);
+          if (tempTrackIds.length > 0){
+            return this.spotifyService.getTracks(tempTrackIds);
+          } else {
+            const temp = new Tracks();
+            temp.tracks = [];
+            return of(temp);
+          }
         })).subscribe((tracksList) => {
           let trackSet = new Set<string>();
           for (let i = 0; i < tracksList.length; i ++) {

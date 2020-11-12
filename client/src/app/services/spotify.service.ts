@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AlbumSearch } from '../models/album/album-search.model';
 import { Album } from '../models/album/album.model';
 import { ArtistSearch } from '../models/artist/artist-search.model';
@@ -96,7 +96,9 @@ export class SpotifyService {
 
   // Creating playlist will either send in a album type or a track id
   getAbstractTrack(item: Album | Track) {
-    if (item.type === 'album') {
+    if (item === undefined) {
+      return of(undefined)
+    } else if (item.type === 'album') {
       return this.getAlbumTracks(item.id);
     } else {
       return this.getTrack(item.id);
@@ -153,11 +155,8 @@ export class SpotifyService {
     });
   }
 
-  refresh() {
-    return this.http.post("https://api.spotify.com/v1/", {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
+  refresh(): Observable<any> {
+    return this.http.get<any>("http://road-mixify-server.herokuapp.com/refresh_token/", {
       params: {
         refresh_token: this.user.refresh_token
       }

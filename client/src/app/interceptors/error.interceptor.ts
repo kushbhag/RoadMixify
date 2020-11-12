@@ -25,15 +25,30 @@ export class ErrorInterceptor implements HttpInterceptor {
       retry(1),
       catchError((error: HttpErrorResponse) => {
         if (error.error instanceof ErrorEvent) {
-          
+
         } else {
-          localStorage.removeItem('user');
-          this.router.navigate(['/home']);
-          // if (this.spotifyService.loggedIn()) {
-          //   this.spotifyService.refresh().subscribe(val => {
-          //     console.log(val);
-          //   });
-          // }
+          if (error.status === 400 || error.status === 401) {
+            if (this.spotifyService.loggedIn()) {
+              this.spotifyService.refresh().subscribe(
+                val => {
+                  const user = this.spotifyService.user;
+                  localStorage.removeItem('user');
+                  if (val.access_token !== undefined) {
+                    user.access_token = val.access_token;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    this.spotifyService.user = user;
+                  }
+                },
+                err => {
+                  localStorage.removeItem('user');
+                  this.router.navigate(['/home']);
+                }
+              );
+            }
+          } else {
+            localStorage.removeItem('user');
+            this.router.navigate(['/home']);
+          }
         }
         return throwError(error);
       })
