@@ -177,7 +177,7 @@ export class SpotifyService {
   }
 
   refresh(): Observable<any> {
-    return this.http.get<any>("http://road-mixify-server.herokuapp.com/refresh_token/", {
+    return this.http.get<any>("https://road-mixify-server.herokuapp.com/refresh_token/", {
       params: {
         refresh_token: this.user.refresh_token
       }
