@@ -1,25 +1,42 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { CacheEntry, MAX_CACHE_AGE } from '../classes/cache-entry';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CacheService {
 
+  cache = new Map<string, CacheEntry>();
   private requests: any = { };
 
   constructor() { }
 
-  put(url: string, response: HttpResponse<any>): void {
-    this.requests[url] = response;
+  put(req: HttpRequest<any>, res: HttpResponse<any>): void {
+    const entry: CacheEntry = { urlWithParams: req.urlWithParams, response: res, entryTime: Date.now()};
+    this.cache.set(req.urlWithParams, entry);
+    this.deleteExpiredCache();
   }
 
-  get(url: string): HttpResponse<any> | undefined {
-    return this.requests[url];
+  get(req: HttpRequest<any>): HttpResponse<any> | null {
+    const entry = this.cache.get(req.urlWithParams);
+    if (!entry) {
+      return null;
+    }
+    const isExpired = (Date.now() - entry.entryTime) > MAX_CACHE_AGE;
+    return isExpired ? null : entry.response;
   }
 
   invalidateCache(): void {
-    this.requests = { };
+    this.requests = new Map<string, CacheEntry>();
+  }
+
+  private deleteExpiredCache(): void {
+    this.cache.forEach(entry => {
+      if ((Date.now() - entry.entryTime) > MAX_CACHE_AGE) {
+        this.cache.delete(entry.urlWithParams);
+      }
+    });
   }
 
 }

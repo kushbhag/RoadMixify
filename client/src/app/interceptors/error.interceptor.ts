@@ -24,19 +24,21 @@ export class ErrorInterceptor implements HttpInterceptor {
     .pipe(
       retry(1),
       catchError((error: HttpErrorResponse) => {
-        if (error.error instanceof ErrorEvent) {
+        // if (error.error instanceof ErrorEvent) {
 
-        }
+        // }
         if (error.status === 400 || error.status === 401) {
           if (this.spotifyService.loggedIn()) {
+            console.log('Refreshing User Access Token');
             this.spotifyService.refresh().subscribe(
               val => {
-                const user = this.spotifyService.user;
+                let user = this.spotifyService.user;
                 localStorage.removeItem('user');
                 if (val.access_token !== undefined) {
                   user.access_token = val.access_token;
                   localStorage.setItem('user', JSON.stringify(user));
                   this.spotifyService.user = user;
+                  console.log('Refreshed');
                 }
               },
               err => {
@@ -46,6 +48,8 @@ export class ErrorInterceptor implements HttpInterceptor {
             );
           }
         } else {
+          console.log('Removing User');
+          console.log(error);
           localStorage.removeItem('user');
           this.router.navigate(['/home']);
         }
