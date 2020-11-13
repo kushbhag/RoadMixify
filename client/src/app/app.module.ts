@@ -17,6 +17,8 @@ import { PostPlaylistComponent } from './components/post-playlist/post-playlist.
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { CacheInterceptor } from './interceptors/cache.interceptor';
+import { CacheService } from './services/cache.service';
 
 @NgModule({
   declarations: [
@@ -39,10 +41,16 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
   providers: [
     SpotifyService,
     PlaylistService,
+    CacheService,
     AuthGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CacheInterceptor,
       multi: true
     }
   ],

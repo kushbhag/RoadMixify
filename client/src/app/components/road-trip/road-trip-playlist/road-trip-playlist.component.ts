@@ -25,63 +25,111 @@ export class RoadTripPlaylistComponent implements OnInit {
 
   constructor(private playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
-      this.tracks = [];
       this.refreshTracks = [];
-      this.duration = 0;
   }
 
   ngOnInit(): void {
     this.loadPlaylist();
   }
 
+  // Get all the albums's tracks 50 requests per artist
+  // Now I can figure out randomness
+
   loadPlaylist(): void {
+    this.duration = 0;
+    this.tracks = [];
     this.getAllAlbums().subscribe((res) => {
-      forkJoin(this.counts.map((val, index) => {
-        let indices = [];
-        for (let f = 0; f < 50; f ++) {
-          let indexArtist = Math.floor(Math.random() * res.length);
-          let indexAlbum = Math.floor(Math.random() * res[indexArtist].items.length);
-          indices.push([indexArtist, indexAlbum]);
-        }
-        return forkJoin(indices.map((a, k) => {
-          return this.spotifyService.getAbstractTrack(res[a[0]].items[a[1]])
+      forkJoin(res.map((albs) => {
+        // let indices = [];
+        // for (let f = 0; f < 50; f ++) {
+        //   let indexArtist = Math.floor(Math.random() * res.length);
+        //   let indexAlbum = Math.floor(Math.random() * res[indexArtist].items.length);
+        //   indices.push([indexArtist, indexAlbum]);
+        // }
+        return forkJoin(albs.items.map((a) => {
+          return this.spotifyService.getAbstractTrack(a);
         }));
       })).subscribe((val) => {
-        forkJoin(val.map((arr, index) =>{
-          let tempTrackIds = [];
-          for (let i = 0; i < arr.length; i ++) {
-            if (arr[i] === undefined) {
-              continue;
-            } else if ((<PagingObject>arr[i]).items !== undefined){
-              let indexTrack = Math.floor(Math.random() * (<PagingObject>arr[i]).items.length);
-              tempTrackIds.push((<PagingObject>arr[i]).items[indexTrack].id);
-            } else {
-              tempTrackIds.push((<Track>arr[i]).id);;
-            }
+        let trackIds = [];
+        let trackSet = new Set<string>();
+        let index = 0;
+        while (this.duration < this.playlistService.totalDuration) {
+          if (index++ > 10000) {
+            break;
           }
-          if (tempTrackIds.length > 0){
-            return this.spotifyService.getTracks(tempTrackIds);
+          let indexArtist = Math.floor(Math.random() * val.length);
+          let indexAlbum = Math.floor(Math.random() * val[indexArtist].length);
+          const album = val[indexArtist][indexAlbum];
+          if (album === undefined) {
+            continue;
+          } else if ((<PagingObject>album).items !== undefined) {
+            let indexTrack = Math.floor(Math.random() * (<PagingObject>album).items.length);
+            if (!trackSet.has((<PagingObject>album).items[indexTrack].name)) {
+              trackIds.push((<PagingObject>album).items[indexTrack].id);
+              this.duration += (<PagingObject>album).items[indexTrack].duration_ms;
+              trackSet.add((<PagingObject>album).items[indexTrack].name);
+            }
           } else {
-            const temp = new Tracks();
-            temp.tracks = [];
-            return of(temp);
-          }
-        })).subscribe((tracksList) => {
-          let trackSet = new Set<string>();
-          for (let i = 0; i < tracksList.length; i ++) {
-            for (let track of tracksList[i].tracks){
-              if (this.duration >= this.playlistService.totalDuration) {
-                break;
-              } else {
-                if (!trackSet.has(track.name)) {
-                  this.duration += track.duration_ms;
-                  trackSet.add(track.name);
-                  this.tracks.push(track);
-                }
-              }
+            if (!trackSet.has((<Track>album).name)) {
+              trackIds.push((<Track>album).id);
+              this.duration += (<Track>album).duration_ms;
+              trackSet.add((<Track>album).name);
             }
           }
-        })
+        }
+        // let s = [];
+        // for (let i = 0; i < trackIds.length; i *= 50) {
+        //   s.push(trackIds.s)
+        // }
+        let subTrackIds = [];
+        for (let i = 0; i < trackIds.length; i += 50) {
+          subTrackIds.push(trackIds.slice(i, i+50));
+        }
+        forkJoin(subTrackIds.map(ids => {
+          return this.spotifyService.getTracks(ids);
+        })).subscribe((tracksList) => {
+          for (let tracks of tracksList) {
+            for (let t of tracks.tracks) {
+              this.tracks.push(t);
+            }
+          }
+        });
+        // console.log(this.tracks);
+        // forkJoin(val.map((arr, index) =>{
+        //   let tempTrackIds = [];
+        //   for (let i = 0; i < arr.length; i ++) {
+        //     if (arr[i] === undefined) {
+        //       continue;
+        //     } else if ((<PagingObject>arr[i]).items !== undefined){
+        //       let indexTrack = Math.floor(Math.random() * (<PagingObject>arr[i]).items.length);
+        //       tempTrackIds.push((<PagingObject>arr[i]).items[indexTrack].id);
+        //     } else {
+        //       tempTrackIds.push((<Track>arr[i]).id);;
+        //     }
+        //   }
+        //   if (tempTrackIds.length > 0){
+        //     return this.spotifyService.getTracks(tempTrackIds);
+        //   } else {
+        //     const temp = new Tracks();
+        //     temp.tracks = [];
+        //     return of(temp);
+        //   }
+        // })).subscribe((tracksList) => {
+        //   let trackSet = new Set<string>();
+        //   for (let i = 0; i < tracksList.length; i ++) {
+        //     for (let track of tracksList[i].tracks){
+        //       if (this.duration >= this.playlistService.totalDuration) {
+        //         break;
+        //       } else {
+        //         if (!trackSet.has(track.name)) {
+        //           this.duration += track.duration_ms;
+        //           trackSet.add(track.name);
+        //           this.tracks.push(track);
+        //         }
+        //       }
+        //     }
+        //   }
+        // })
       })
     });
     this.refresh = false;

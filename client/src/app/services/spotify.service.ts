@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AlbumSearch } from '../models/album/album-search.model';
 import { Album } from '../models/album/album.model';
 import { ArtistSearch } from '../models/artist/artist-search.model';
