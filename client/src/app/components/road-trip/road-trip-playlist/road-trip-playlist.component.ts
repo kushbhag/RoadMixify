@@ -27,6 +27,8 @@ export class RoadTripPlaylistComponent implements OnInit {
 
   constructor(private playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
+      this.duration = 0;
+      this.tracks = [];
       this.refreshTracks = [];
   }
 
@@ -38,19 +40,13 @@ export class RoadTripPlaylistComponent implements OnInit {
   // Now I can figure out randomness
 
   loadPlaylist(): void {
-    this.duration = 0;
-    this.tracks = [];
     this.getAllAlbums().subscribe((res) => {
       forkJoin(res.map((albs) => {
         let albIds = [];
-        let index = 0;
-        for (let tracks of albs.items) {
-          if (index ++ > 19) { // FIX to allow more than just 20 albums
-            break;
-          }
-          if (tracks.type === 'album') {
-            albIds.push(tracks.id);
-          } else if (tracks.type === 'track') {
+        for (let i = 0; i < albs.items.length; i += 20) {
+          if (albs.items[i].type === 'album') {
+            albIds.push(albs.items.slice(i, i+20).map(a => a.id));
+          } else if (albs.items[i].type === 'track') {
             let tempAlbs = new Albums();
             let tempAlb = new Album();
             tempAlb.tracks = albs;
@@ -58,11 +54,27 @@ export class RoadTripPlaylistComponent implements OnInit {
             return of (tempAlbs);
           }
         }
-        return this.spotifyService.getAlbums(albIds);
-      })).subscribe((val) => {
+        return forkJoin(albIds.map(a => {
+          return this.spotifyService.getAlbums(a);
+        }));
+      })).subscribe((albumsArr) => {
+        console.log(albumsArr);
+        let val = [];
+        for (let i = 0; i < albumsArr.length; i ++) {
+          if ((<Albums>albumsArr[i]).albums === undefined) {
+            let albums = new Albums();
+            albums.albums = [];
+            for (let listOfAlbums of <Albums[]>albumsArr[i]) {
+              albums.albums.push(...listOfAlbums.albums);
+            }
+            val[i] = albums;
+          } else {
+            val[i] = albumsArr[i];
+          }
+        }
         console.log(val);
         let trackIds = [];
-        let trackSet = new Set<string>();
+        let trackSet = new Set<string>(this.tracks.map(t => t.name));
         let index = 0;
         while (this.duration < this.playlistService.totalDuration) {
           if (index++ > 10000) {
