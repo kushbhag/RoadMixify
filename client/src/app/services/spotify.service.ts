@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlbumSearch } from '../models/album/album-search.model';
 import { Album } from '../models/album/album.model';
+import { Albums } from '../models/albums.model';
 import { ArtistSearch } from '../models/artist/artist-search.model';
 import { CursorPagingObject } from '../models/cursor-paging-object.model';
 import { PagingObject } from '../models/paging-object.model';
@@ -110,6 +111,25 @@ export class SpotifyService {
     return this.http.get<PagingObject> ("https://api.spotify.com/v1/albums/"+id+"/tracks", {
       params: {
         limit: '50',
+        market: 'CA'
+      },
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  getAlbums(ids: string[]): Observable<Albums> {
+    let fullQuery: string = '';
+    for (let i = 0; i < ids.length; i ++) {
+      fullQuery += ids[i];
+      if (i + 1 < ids.length) {
+        fullQuery += ',';
+      }
+    }
+    return this.http.get<Albums>("https://api.spotify.com/v1/albums/", {
+      params: {
+        ids: fullQuery,
         market: 'CA'
       },
       headers: {

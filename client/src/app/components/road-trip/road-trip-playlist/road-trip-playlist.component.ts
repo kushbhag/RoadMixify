@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
+import { Album } from 'src/app/models/album/album.model';
+import { Albums } from 'src/app/models/albums.model';
 import { PagingObject } from 'src/app/models/paging-object.model';
 import { Track } from 'src/app/models/track.model';
 import { Tracks } from 'src/app/models/tracks.model';
@@ -40,16 +42,25 @@ export class RoadTripPlaylistComponent implements OnInit {
     this.tracks = [];
     this.getAllAlbums().subscribe((res) => {
       forkJoin(res.map((albs) => {
-        // let indices = [];
-        // for (let f = 0; f < 50; f ++) {
-        //   let indexArtist = Math.floor(Math.random() * res.length);
-        //   let indexAlbum = Math.floor(Math.random() * res[indexArtist].items.length);
-        //   indices.push([indexArtist, indexAlbum]);
-        // }
-        return forkJoin(albs.items.map((a) => {
-          return this.spotifyService.getAbstractTrack(a);
-        }));
+        let albIds = [];
+        let index = 0;
+        for (let tracks of albs.items) {
+          if (index ++ > 19) { // FIX to allow more than just 20 albums
+            break;
+          }
+          if (tracks.type === 'album') {
+            albIds.push(tracks.id);
+          } else if (tracks.type === 'track') {
+            let tempAlbs = new Albums();
+            let tempAlb = new Album();
+            tempAlb.tracks = albs;
+            tempAlbs.albums = [tempAlb];
+            return of (tempAlbs);
+          }
+        }
+        return this.spotifyService.getAlbums(albIds);
       })).subscribe((val) => {
+        console.log(val);
         let trackIds = [];
         let trackSet = new Set<string>();
         let index = 0;
@@ -58,29 +69,21 @@ export class RoadTripPlaylistComponent implements OnInit {
             break;
           }
           let indexArtist = Math.floor(Math.random() * val.length);
-          let indexAlbum = Math.floor(Math.random() * val[indexArtist].length);
-          const album = val[indexArtist][indexAlbum];
+          let indexAlbum = Math.floor(Math.random() * val[indexArtist].albums.length);
+          const album = val[indexArtist].albums[indexAlbum];
+
           if (album === undefined) {
             continue;
-          } else if ((<PagingObject>album).items !== undefined) {
-            let indexTrack = Math.floor(Math.random() * (<PagingObject>album).items.length);
-            if (!trackSet.has((<PagingObject>album).items[indexTrack].name)) {
-              trackIds.push((<PagingObject>album).items[indexTrack].id);
-              this.duration += (<PagingObject>album).items[indexTrack].duration_ms;
-              trackSet.add((<PagingObject>album).items[indexTrack].name);
-            }
           } else {
-            if (!trackSet.has((<Track>album).name)) {
-              trackIds.push((<Track>album).id);
-              this.duration += (<Track>album).duration_ms;
-              trackSet.add((<Track>album).name);
+            let indexTrack = Math.floor(Math.random() * album.tracks.items.length);
+            if (!trackSet.has(album.tracks.items[indexTrack].name)) {
+              trackIds.push(album.tracks.items[indexTrack].id);
+              this.duration += album.tracks.items[indexTrack].duration_ms;
+              trackSet.add(album.tracks.items[indexTrack].name);
             }
           }
         }
-        // let s = [];
-        // for (let i = 0; i < trackIds.length; i *= 50) {
-        //   s.push(trackIds.s)
-        // }
+
         let subTrackIds = [];
         for (let i = 0; i < trackIds.length; i += 50) {
           subTrackIds.push(trackIds.slice(i, i+50));
@@ -94,42 +97,6 @@ export class RoadTripPlaylistComponent implements OnInit {
             }
           }
         });
-        // console.log(this.tracks);
-        // forkJoin(val.map((arr, index) =>{
-        //   let tempTrackIds = [];
-        //   for (let i = 0; i < arr.length; i ++) {
-        //     if (arr[i] === undefined) {
-        //       continue;
-        //     } else if ((<PagingObject>arr[i]).items !== undefined){
-        //       let indexTrack = Math.floor(Math.random() * (<PagingObject>arr[i]).items.length);
-        //       tempTrackIds.push((<PagingObject>arr[i]).items[indexTrack].id);
-        //     } else {
-        //       tempTrackIds.push((<Track>arr[i]).id);;
-        //     }
-        //   }
-        //   if (tempTrackIds.length > 0){
-        //     return this.spotifyService.getTracks(tempTrackIds);
-        //   } else {
-        //     const temp = new Tracks();
-        //     temp.tracks = [];
-        //     return of(temp);
-        //   }
-        // })).subscribe((tracksList) => {
-        //   let trackSet = new Set<string>();
-        //   for (let i = 0; i < tracksList.length; i ++) {
-        //     for (let track of tracksList[i].tracks){
-        //       if (this.duration >= this.playlistService.totalDuration) {
-        //         break;
-        //       } else {
-        //         if (!trackSet.has(track.name)) {
-        //           this.duration += track.duration_ms;
-        //           trackSet.add(track.name);
-        //           this.tracks.push(track);
-        //         }
-        //       }
-        //     }
-        //   }
-        // })
       })
     });
     this.refresh = false;
