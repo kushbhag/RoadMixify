@@ -12,6 +12,8 @@ export class PlaylistService {
   timeDuration = [];
   totalDuration: number;
   playListLink: string;
+  explicit = true;
+  public = true;
 
   constructor() {
     this.artists = [];

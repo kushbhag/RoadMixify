@@ -49,9 +49,10 @@ export class SpotifyService {
   // }
 
   // Post
-  createPlaylist(id: string, name: string): Observable<Playlist> {
+  createPlaylist(id: string, name: string, publicPlaylist: boolean): Observable<Playlist> {
     return this.http.post<Playlist>("https://api.spotify.com/v1/users/"+id+"/playlists", {
-      "name": name
+      "name": name,
+      "public": publicPlaylist
     },
     {
       headers: {

@@ -33,73 +33,99 @@ export class RoadTripPlaylistComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.playlistService.public);
     this.loadPlaylist();
   }
 
-  // Get all the albums's tracks 50 requests per artist
-  // Now I can figure out randomness
+  getPlaylistTracks(albumArtistMix: any[]): string[] {
+    let trackIds = [];
+    let trackSet = new Set<string>(this.tracks.map(t => t.name));
+    let index = 0;
+    // Store the track id's for the songs
+    while (this.duration < this.playlistService.totalDuration) {
+      // To ensure that it doesn't run forever
+      if (index++ > 10000) {
+        break;
+      }
+      let indexMix = Math.floor(Math.random() * albumArtistMix.length);
+      let indexAlbum = Math.floor(Math.random() * albumArtistMix[indexMix].albums.length);
+      const album = albumArtistMix[indexMix].albums[indexAlbum];
+
+      if (album === undefined) {
+        continue;
+      } else {
+        let indexTrack = Math.floor(Math.random() * album.tracks.items.length);
+        if (!this.playlistService.explicit && album.tracks.items[indexTrack].explicit) {
+          continue;
+        }
+        if (!trackSet.has(album.tracks.items[indexTrack].name)) {
+          trackIds.push(album.tracks.items[indexTrack].id);
+          this.duration += album.tracks.items[indexTrack].duration_ms;
+          trackSet.add(album.tracks.items[indexTrack].name);
+        }
+      }
+    }
+    return trackIds;
+  }
+
+  getAlbumArtistMix(albumsList: (Albums | Albums[])[]): any[] {
+    let albumArtistMix = [];
+    // Convert the arrays of length 20 into one array
+    for (let i = 0; i < albumsList.length; i ++) {
+      if ((<Albums>albumsList[i]).albums === undefined) {
+        let albums = new Albums([]);
+        for (let listOfAlbums of <Albums[]>albumsList[i]) {
+          albums.albums.push(...listOfAlbums.albums);
+        }
+        albumArtistMix[i] = albums;
+      } else {
+        albumArtistMix[i] = albumsList[i];
+      }
+    }
+    return albumArtistMix;
+  }
 
   loadPlaylist(): void {
-    this.getAllAlbums().subscribe((res) => {
-      forkJoin(res.map((albs) => {
-        let albIds = [];
-        for (let i = 0; i < albs.items.length; i += 20) {
-          if (albs.items[i].type === 'album') {
-            albIds.push(albs.items.slice(i, i+20).map(a => a.id));
-          } else if (albs.items[i].type === 'track') {
-            let tempAlbs = new Albums();
-            let tempAlb = new Album();
-            tempAlb.tracks = albs;
-            tempAlbs.albums = [tempAlb];
-            return of (tempAlbs);
+
+    // Get all the albums for the corresponding albums and artists
+    this.getAllAlbums().subscribe((pagingObjects) => {
+      forkJoin(pagingObjects.map((pagingObject) => {
+        let albumIds = [];
+
+        // Check if artist / album has no tracks
+        if (pagingObject.items.length === 0) {
+          return of(new Albums([]));
+        }
+
+        // Go through paging objects to sort them into arrays of 20 (if artist)
+        //  if it is an album, it will simply return
+        for (let i = 0; i < pagingObject.items.length; i += 20) {
+          if (pagingObject.items[i].type === 'album') {
+            albumIds.push(pagingObject.items.slice(i, i+20).map(a => a.id));
+          } else if (pagingObject.items[i].type === 'track') {
+            let wrapperAlbum = new Album();
+            wrapperAlbum.tracks = pagingObject;
+            let wrapperAlbums = new Albums([wrapperAlbum]);
+            return of (wrapperAlbums);
           }
         }
-        return forkJoin(albIds.map(a => {
+
+        // Return the forkjoined bersion of all the albums of the artist
+        return forkJoin(albumIds.map(a => {
           return this.spotifyService.getAlbums(a);
         }));
-      })).subscribe((albumsArr) => {
-        console.log(albumsArr);
-        let val = [];
-        for (let i = 0; i < albumsArr.length; i ++) {
-          if ((<Albums>albumsArr[i]).albums === undefined) {
-            let albums = new Albums();
-            albums.albums = [];
-            for (let listOfAlbums of <Albums[]>albumsArr[i]) {
-              albums.albums.push(...listOfAlbums.albums);
-            }
-            val[i] = albums;
-          } else {
-            val[i] = albumsArr[i];
-          }
-        }
-        console.log(val);
-        let trackIds = [];
-        let trackSet = new Set<string>(this.tracks.map(t => t.name));
-        let index = 0;
-        while (this.duration < this.playlistService.totalDuration) {
-          if (index++ > 10000) {
-            break;
-          }
-          let indexArtist = Math.floor(Math.random() * val.length);
-          let indexAlbum = Math.floor(Math.random() * val[indexArtist].albums.length);
-          const album = val[indexArtist].albums[indexAlbum];
+      })).subscribe((albumsList) => {
+        let albumArtistMix = this.getAlbumArtistMix(albumsList);
 
-          if (album === undefined) {
-            continue;
-          } else {
-            let indexTrack = Math.floor(Math.random() * album.tracks.items.length);
-            if (!trackSet.has(album.tracks.items[indexTrack].name)) {
-              trackIds.push(album.tracks.items[indexTrack].id);
-              this.duration += album.tracks.items[indexTrack].duration_ms;
-              trackSet.add(album.tracks.items[indexTrack].name);
-            }
-          }
-        }
+        let trackIds = this.getPlaylistTracks(albumArtistMix);
 
+        // Split the track id's into groups of 50
         let subTrackIds = [];
         for (let i = 0; i < trackIds.length; i += 50) {
           subTrackIds.push(trackIds.slice(i, i+50));
         }
+
+        // Get the tracks for all the track id's
         forkJoin(subTrackIds.map(ids => {
           return this.spotifyService.getTracks(ids);
         })).subscribe((tracksList) => {
@@ -128,8 +154,11 @@ export class RoadTripPlaylistComponent implements OnInit {
     if (this.playlistName.nativeElement.value === '') {
       this.playlistName.nativeElement.value = 'Road Trip Playlist';
     }
+    console.log(this.playlistService.public);
     this.spotifyService.getUser().subscribe(val => {
-      this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value).subscribe((play) => {
+      console.log(this.playlistService.public);
+      this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value, this.playlistService.public)
+      .subscribe((play) => {
         this.playlistService.playListLink = play.external_urls.spotify;
         let trackIds = this.getTrackIds();
         for (let i = 0; i<this.tracks.length; i += 100) {

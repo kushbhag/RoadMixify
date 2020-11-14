@@ -134,6 +134,27 @@
                         </table>
                     </div>
                 </div>
+                <p>
+                    <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                      Advanced Options
+                    </button>
+                </p>
+                <div class="collapse" id="collapseExample">
+                    <div class="card card-header">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h6>Explicit On: </h6>
+                            </div>
+                            <input class="mt-2" type="checkbox" formControlName="explicit">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h6>Public Playlist: </h6>
+                            </div>
+                            <input class="mt-2" type="checkbox" formControlName="public">
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group row">
                     <div *ngIf="errorMessage !== ''" class="col-12">
                         <div class="alert alert-danger" role="alert">

@@ -40,6 +40,8 @@ export class RoadTripComponent implements OnInit {
     this.playlistForm = this.fb.group({
       artists: [''],
       albums: [''],
+      explicit: true,
+      public: true,
       duration: this.fb.group({
         hours: ['', [Validators.max(23), Validators.min(0)]],
         minutes: ['', [Validators.max(59), Validators.min(0)]],
@@ -59,6 +61,8 @@ export class RoadTripComponent implements OnInit {
     if (this.playlistService.albums.length > 0) {
       this.albums = this.playlistService.albums;
     }
+    this.playlistForm.controls['explicit'].setValue(this.playlistService.explicit);
+    this.playlistForm.controls['public'].setValue(this.playlistService.public);
     this.duration.controls['hours'].setValue(this.playlistService.timeDuration[0]);
     this.duration.controls['minutes'].setValue(this.playlistService.timeDuration[1]);
     this.duration.controls['seconds'].setValue(this.playlistService.timeDuration[2]);
@@ -101,6 +105,10 @@ export class RoadTripComponent implements OnInit {
     this.playlistService.timeDuration[1] = this.duration.controls['minutes'].value;
     this.playlistService.timeDuration[2] = this.duration.controls['seconds'].value;
 
+    this.playlistService.explicit = this.playlistForm.controls['explicit'].value;
+    this.playlistService.public = this.playlistForm.controls['public'].value;
+    console.log(this.playlistService.public);
+
     if (timeDuration === 0) {
       this.errorMessage = 'Duration cannot be 0';
     } else if (this.artists.length < 1 && this.albums.length < 1) {
@@ -118,6 +126,8 @@ export class RoadTripComponent implements OnInit {
     this.albums = [];
     this.playlistForm.controls['artists'].setValue('');
     this.playlistForm.controls['albums'].setValue('');
+    this.playlistForm.controls['explicit'].setValue(true);
+    this.playlistForm.controls['public'].setValue(true);
     this.duration.controls['hours'].setValue('');
     this.duration.controls['minutes'].setValue('');
     this.duration.controls['seconds'].setValue('');
@@ -135,14 +145,6 @@ export class RoadTripComponent implements OnInit {
       this.spotifyService.searchAlbum(searchField, 5).subscribe((val) => {
         this.searchResultAlbum = val.albums.items;
       });
-    }
-  }
-
-  fitText(searchField: string, searchColumn: string) {
-    if (searchColumn === 'artists') {
-      this.playlistForm.controls['artists'].setValue(searchField);
-    } else if (searchColumn === 'albums') {
-      this.playlistForm.controls['albums'].setValue(searchField);
     }
   }
 
