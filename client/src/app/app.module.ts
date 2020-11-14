@@ -19,6 +19,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { CacheService } from './services/cache.service';
+import { AlbumOnlyPipe } from './pipe/albums.pipe';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CacheService } from './services/cache.service';
     RoadTripPlaylistComponent,
     PostPlaylistComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    AlbumOnlyPipe
   ],
   imports: [
     CommonModule,

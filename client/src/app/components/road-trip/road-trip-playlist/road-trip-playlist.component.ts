@@ -50,7 +50,7 @@ export class RoadTripPlaylistComponent implements OnInit {
       let indexMix = Math.floor(Math.random() * albumArtistMix.length);
       let indexAlbum = Math.floor(Math.random() * albumArtistMix[indexMix].albums.length);
       const album = albumArtistMix[indexMix].albums[indexAlbum];
-
+      
       if (album === undefined) {
         continue;
       } else {
@@ -72,13 +72,13 @@ export class RoadTripPlaylistComponent implements OnInit {
     let albumArtistMix = [];
     // Convert the arrays of length 20 into one array
     for (let i = 0; i < albumsList.length; i ++) {
-      if ((<Albums>albumsList[i]).albums === undefined) {
+      if ((<Albums>albumsList[i]).albums === undefined) { // For the artists
         let albums = new Albums([]);
         for (let listOfAlbums of <Albums[]>albumsList[i]) {
           albums.albums.push(...listOfAlbums.albums);
         }
         albumArtistMix[i] = albums;
-      } else {
+      } else { // For the albums
         albumArtistMix[i] = albumsList[i];
       }
     }
@@ -88,67 +88,67 @@ export class RoadTripPlaylistComponent implements OnInit {
   loadPlaylist(): void {
 
     // Get all the albums for the corresponding albums and artists
-    this.getAllAlbums().subscribe((pagingObjects) => {
-      forkJoin(pagingObjects.map((pagingObject) => {
-        let albumIds = [];
+    forkJoin(this.playlistService.artistAlbumMix.map((mix) => {
+      let albumIds = [];
 
-        // Check if artist / album has no tracks
-        if (pagingObject.items.length === 0) {
-          return of(new Albums([]));
+      // Check if artist / album has no tracks
+      if (mix.length === 0) {
+        return of(new Albums([]));
+      }
+
+      // Go through paging objects to sort them into arrays of 20 (if artist)
+      //  if it is an album, it will simply return
+      for (let i = 0; i < mix.length; i += 20) {
+        if (mix[i].type === 'album') {
+          albumIds.push(mix.slice(i, i+20).map(a => a.id));
+        } else if (mix[i].type === 'track') {
+          let wrapperAlbum = new Album();
+          let wrapperPagingObject = new PagingObject();
+          wrapperPagingObject.items = mix;
+          wrapperAlbum.tracks = wrapperPagingObject;
+          let wrapperAlbums = new Albums([wrapperAlbum]);
+          return of (wrapperAlbums);
         }
+      }
 
-        // Go through paging objects to sort them into arrays of 20 (if artist)
-        //  if it is an album, it will simply return
-        for (let i = 0; i < pagingObject.items.length; i += 20) {
-          if (pagingObject.items[i].type === 'album') {
-            albumIds.push(pagingObject.items.slice(i, i+20).map(a => a.id));
-          } else if (pagingObject.items[i].type === 'track') {
-            let wrapperAlbum = new Album();
-            wrapperAlbum.tracks = pagingObject;
-            let wrapperAlbums = new Albums([wrapperAlbum]);
-            return of (wrapperAlbums);
+      // Return the forkjoined version of all the albums of the artist
+      return forkJoin(albumIds.map(a => {
+        return this.spotifyService.getAlbums(a);
+      }));
+    })).subscribe((albumsList) => {
+      let albumArtistMix = this.getAlbumArtistMix(albumsList);
+
+      let trackIds = this.getPlaylistTracks(albumArtistMix);
+
+      // Split the track id's into groups of 50
+      let subTrackIds = [];
+      for (let i = 0; i < trackIds.length; i += 50) {
+        subTrackIds.push(trackIds.slice(i, i+50));
+      }
+
+      // Get the tracks for all the track id's
+      forkJoin(subTrackIds.map(ids => {
+        return this.spotifyService.getTracks(ids);
+      })).subscribe((tracksList) => {
+        for (let tracks of tracksList) {
+          for (let t of tracks.tracks) {
+            this.tracks.push(t);
           }
         }
-
-        // Return the forkjoined bersion of all the albums of the artist
-        return forkJoin(albumIds.map(a => {
-          return this.spotifyService.getAlbums(a);
-        }));
-      })).subscribe((albumsList) => {
-        let albumArtistMix = this.getAlbumArtistMix(albumsList);
-
-        let trackIds = this.getPlaylistTracks(albumArtistMix);
-
-        // Split the track id's into groups of 50
-        let subTrackIds = [];
-        for (let i = 0; i < trackIds.length; i += 50) {
-          subTrackIds.push(trackIds.slice(i, i+50));
-        }
-
-        // Get the tracks for all the track id's
-        forkJoin(subTrackIds.map(ids => {
-          return this.spotifyService.getTracks(ids);
-        })).subscribe((tracksList) => {
-          for (let tracks of tracksList) {
-            for (let t of tracks.tracks) {
-              this.tracks.push(t);
-            }
-          }
-        });
-      })
-    });
+      });
+    })
     this.refresh = false;
   }
 
-  getAllAlbums(): Observable<Array<PagingObject>> {
-    let art$ = this.playlistService.artists.map((a, index) => {
-      return this.spotifyService.getArtistsAlbums(a.id);
-    });
-    let alb$ = this.playlistService.albums.map((a, index) => {
-      return this.spotifyService.getAlbumTracks(a.id)
-    });
-    return forkJoin([...art$, ...alb$]);
-  }
+  // getAllAlbums(): Observable<Array<PagingObject>> {
+  //   let art$ = this.playlistService.artists.map((a, index) => {
+  //     return this.spotifyService.getArtistsAlbums(a.id);
+  //   });
+  //   let alb$ = this.playlistService.albums.map((a, index) => {
+  //     return this.spotifyService.getAlbumTracks(a.id)
+  //   });
+  //   return forkJoin([...art$, ...alb$]);
+  // }
 
   addPlaylist(): void {
     if (this.playlistName.nativeElement.value === '') {

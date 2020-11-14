@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { element } from 'protractor';
 import { Album } from 'src/app/models/album/album.model';
 import { Artist } from 'src/app/models/artist/artist.model';
+import { PagingObject } from 'src/app/models/paging-object.model';
 import { PlayHistory } from 'src/app/models/play-history.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
 import { SpotifyService } from 'src/app/services/spotify.service';
@@ -18,6 +19,10 @@ export class RoadTripComponent implements OnInit {
   recentlyPlayed: PlayHistory[];
   playlistForm: FormGroup;
   errorMessage = '';
+
+  artistsAlbumFull = new Map<string, Album[]>();
+  artistsAlbum = new Map<string, Album[]>();
+  mixAlbums = new Array<PagingObject>();
 
   artists: Artist[];
   albums: Album[];
@@ -61,6 +66,10 @@ export class RoadTripComponent implements OnInit {
     if (this.playlistService.albums.length > 0) {
       this.albums = this.playlistService.albums;
     }
+    this.mixAlbums = this.playlistService.mixAlbums;
+    this.artistsAlbum = this.playlistService.artistsAlbum;
+    this.artistsAlbumFull = this.playlistService.artistsAlbumFull;
+
     this.playlistForm.controls['explicit'].setValue(this.playlistService.explicit);
     this.playlistForm.controls['public'].setValue(this.playlistService.public);
     this.duration.controls['hours'].setValue(this.playlistService.timeDuration[0]);
@@ -70,24 +79,36 @@ export class RoadTripComponent implements OnInit {
 
   addArtist(artist: Artist) {
     if (artist !== undefined) {
-      this.artists.push(artist);
+      if (!this.artistsAlbumFull.has(artist.name)) {
+        this.artists.push(artist);
+        this.spotifyService.getArtistsAlbums(artist.id).subscribe(album => {
+          this.artistsAlbumFull.set(artist.name, album.items);
+          this.artistsAlbum.set(artist.name, album.items);
+        });
+      }
       this.playlistForm.controls['artists'].setValue('');
     }
   }
 
   addAlbum(album: Album) {
     if (album !== undefined) {
+      this.spotifyService.getAlbumTracks(album.id).subscribe(tracks => {
+        this.mixAlbums.push(tracks);
+      });
       this.albums.push(album);
       this.playlistForm.controls['albums'].setValue('');
     }
   }
 
   removeArtist(index: number) {
-    this.artists.splice(index, 1);
+    let del = this.artists.splice(index, 1);
+    this.artistsAlbumFull.delete(del[0].name);
+    this.artistsAlbum.delete(del[0].name);
   }
 
   removeAlbum(index: number) {
     this.albums.splice(index, 1);
+    this.mixAlbums.splice(index, 1);
   }
 
   save() {
@@ -107,7 +128,6 @@ export class RoadTripComponent implements OnInit {
 
     this.playlistService.explicit = this.playlistForm.controls['explicit'].value;
     this.playlistService.public = this.playlistForm.controls['public'].value;
-    console.log(this.playlistService.public);
 
     if (timeDuration === 0) {
       this.errorMessage = 'Duration cannot be 0';
@@ -117,6 +137,20 @@ export class RoadTripComponent implements OnInit {
       this.playlistService.artists = this.artists;
       this.playlistService.albums = this.albums;
       this.playlistService.totalDuration = timeDuration;
+
+      this.playlistService.artistAlbumMix = [];
+      this.artistsAlbum.forEach((val, key, map) => {
+        let albums = [];
+        albums.push(...val);
+        this.playlistService.artistAlbumMix.push(albums);
+      });
+      this.playlistService.artistAlbumMix.push(...this.mixAlbums.map(po => po.items));
+
+      this.playlistService.artistsAlbum = this.artistsAlbum;
+      this.playlistService.artistsAlbumFull = this.artistsAlbumFull;
+      this.playlistService.mixAlbums = this.mixAlbums;
+
+      console.log(this.playlistService.artistAlbumMix);
       this.router.navigate(['playlist']);
     }
   }
@@ -124,6 +158,8 @@ export class RoadTripComponent implements OnInit {
   reset() {
     this.artists = [];
     this.albums = [];
+    this.artistsAlbum = new Map<string, Album[]>();
+    this.artistsAlbumFull = new Map<string, Album[]>();
     this.playlistForm.controls['artists'].setValue('');
     this.playlistForm.controls['albums'].setValue('');
     this.playlistForm.controls['explicit'].setValue(true);
@@ -146,6 +182,17 @@ export class RoadTripComponent implements OnInit {
         this.searchResultAlbum = val.albums.items;
       });
     }
+  }
+
+  refreshMix($event, artist: string, album: string) {
+    if ($event.currentTarget.checked === false) {
+      let albums = this.artistsAlbum.get(artist);
+      albums = albums.filter(alb => alb.name !== album)
+      this.artistsAlbum.set(artist, albums);
+    } else {
+      this.artistsAlbum.get(artist).push(...this.artistsAlbumFull.get(artist).filter(albums => albums.name === album));
+    }
+    console.log(this.artistsAlbum);
   }
 
 }

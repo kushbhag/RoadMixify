@@ -142,16 +142,46 @@
                 <div class="collapse" id="collapseExample">
                     <div class="card card-header">
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-8 col-md-2">
                                 <h6>Explicit On: </h6>
                             </div>
                             <input class="mt-2" type="checkbox" formControlName="explicit">
                         </div>
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-8 col-md-2">
                                 <h6>Public Playlist: </h6>
                             </div>
                             <input class="mt-2" type="checkbox" formControlName="public">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>Artist's Albums: </h6>
+                            </div>
+                            <div class="col-md-9">
+                                <table class="table table-sm table-dark" *ngIf="artistsAlbumFull.size > 0">
+                                    <thead>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Albums</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="" *ngFor="let entry of artistsAlbumFull | keyvalue">
+                                            <td class="pl-2">{{entry.key}}</td>
+                                            <td>
+                                                <tr *ngFor="let name of (entry.value | albumsOnly)">
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <input type="checkbox" checked="checked" (change)="refreshMix($event, entry.key, name)">
+                                                        </div>
+                                                        <div class="col-md-10">
+                                                            <p>{{name}}</p>
+                                                        </div>
+                                                    </div>
+                                                </tr>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
