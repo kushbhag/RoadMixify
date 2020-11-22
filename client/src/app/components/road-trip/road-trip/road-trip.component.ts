@@ -229,4 +229,18 @@ export class RoadTripComponent implements OnInit {
     }
   }
 
+  /* Is used for the advanced settings checkbox when a user comes back to the form.
+        It will check if the album was selected or not */
+  selected(artist: string, album: string) {
+    let albs = this.artistsAlbum.get(artist);
+    return albs.find(a => a.name === album) ? true : false;
+  }
+
+  /* Select/Deselect all the artist's albums in the advanced section */
+  selectAll(artist: string) {
+    this.artistsAlbum.set(artist, this.artistsAlbumFull.get(artist));
+  }
+  deSelectAll(artist: string) {
+    this.artistsAlbum.set(artist, this.artistsAlbumFull.get(artist).filter(a => a.album_group === 'single'));
+  }
 }

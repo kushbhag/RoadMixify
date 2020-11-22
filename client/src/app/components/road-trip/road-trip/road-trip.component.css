@@ -57,6 +57,11 @@
     padding: 10px;
 }
 
+.select-all {
+    width: 100%;
+    max-width: 150px;
+}
+
 @media (pointer:none), (pointer:coarse) {
     .table-data {
         width: 100%;
