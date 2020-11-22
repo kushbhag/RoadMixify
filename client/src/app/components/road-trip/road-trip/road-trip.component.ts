@@ -22,28 +22,14 @@ export class RoadTripComponent implements OnInit {
   /* Error message in case the user doesn't put proper duration */
   errorMessage = '';
 
-  /* Contains the full list of ALL the albums/singles that an artist has */
-  artistsAlbumFull = new Map<string, Album[]>();
-  /* Contains the selected list of albums/singles that the user selected in advanced settings */
-  artistsAlbum = new Map<string, Album[]>();
-  /* Contains the actual list of user selected albums in the albums section of form */
-  mixAlbums = new Array<PagingObject>();
-
-  /* Are used when the user comes back to the form page, so that we can load up the artists
-      and albums into the form. Mainly used for displaying on the form */
-  artists: Artist[];
-  albums: Album[];
-
   /* Search results when typing an artist in */
   searchResultArtist: Artist[];
   searchResultAlbum: Album[];
 
   constructor(private fb: FormBuilder,
-              private playlistService: PlaylistService,
+              public playlistService: PlaylistService,
               private spotifyService: SpotifyService,
               private router: Router) {
-    this.artists = [];
-    this.albums = [];
   }
 
   get duration(): FormGroup {
@@ -72,18 +58,6 @@ export class RoadTripComponent implements OnInit {
       this.autofill(search, 'album');
     });
 
-    /* Auto fill the form in case the user comes back to the form 
-        this includes filling in data like mixAlbums, artistsAlbum and artistsAlbumFull
-    */
-    if (this.playlistService.artists.length > 0) {
-      this.artists = this.playlistService.artists;
-    }
-    if (this.playlistService.albums.length > 0) {
-      this.albums = this.playlistService.albums;
-    }
-    this.mixAlbums = this.playlistService.mixAlbums;
-    this.artistsAlbum = this.playlistService.artistsAlbum;
-    this.artistsAlbumFull = this.playlistService.artistsAlbumFull;
     this.playlistForm.controls['explicit'].setValue(this.playlistService.explicit);
     this.playlistForm.controls['public'].setValue(this.playlistService.public);
     this.duration.controls['hours'].setValue(this.playlistService.timeDuration[0]);
@@ -94,12 +68,12 @@ export class RoadTripComponent implements OnInit {
   /* User adding artist to form */
   addArtist(artist: Artist) {
     if (artist !== undefined) {
-      if (!this.artistsAlbumFull.has(artist.name)) {
-        this.artists.push(artist);
+      if (!this.playlistService.artistsAlbumFull.has(artist.name)) {
+        this.playlistService.artists.push(artist);
         /* Get all of the artist's albums/singles and store the information */
         this.spotifyService.getArtistsAlbums(artist.id).subscribe(album => {
-          this.artistsAlbumFull.set(artist.name, album.items);
-          this.artistsAlbum.set(artist.name, album.items);
+          this.playlistService.artistsAlbumFull.set(artist.name, album.items);
+          this.playlistService.artistsAlbum.set(artist.name, album.items);
         });
       }
       this.playlistForm.controls['artists'].setValue('');
@@ -111,22 +85,22 @@ export class RoadTripComponent implements OnInit {
     if (album !== undefined) {
       /* Get the album's tracks */
       this.spotifyService.getAlbumTracks(album.id).subscribe(tracks => {
-        this.mixAlbums.push(tracks);
+        this.playlistService.mixAlbums.push(tracks);
       });
-      this.albums.push(album);
+      this.playlistService.albums.push(album);
       this.playlistForm.controls['albums'].setValue('');
     }
   }
 
   /* Self-explanatory removing artists/albums from form */
   removeArtist(index: number) {
-    let del = this.artists.splice(index, 1);
-    this.artistsAlbumFull.delete(del[0].name);
-    this.artistsAlbum.delete(del[0].name);
+    let del = this.playlistService.artists.splice(index, 1);
+    this.playlistService.artistsAlbumFull.delete(del[0].name);
+    this.playlistService.artistsAlbum.delete(del[0].name);
   }
   removeAlbum(index: number) {
-    this.albums.splice(index, 1);
-    this.mixAlbums.splice(index, 1);
+    this.playlistService.albums.splice(index, 1);
+    this.playlistService.mixAlbums.splice(index, 1);
   }
 
   save() {
@@ -153,12 +127,12 @@ export class RoadTripComponent implements OnInit {
 
     if (timeDuration === 0) {
       this.errorMessage = 'Duration cannot be 0';
-    } else if (this.artists.length < 1 && this.albums.length < 1) {
+    } else if (this.playlistService.artists.length < 1 && this.playlistService.albums.length < 1) {
       this.errorMessage = 'Add atleast one artist or album to continue';
     } else if (this.playlistForm.valid){
       /* Storing the values of the artists, albums, and totalDuration in playlistService */
-      this.playlistService.artists = this.artists;
-      this.playlistService.albums = this.albums;
+      this.playlistService.artists = this.playlistService.artists;
+      this.playlistService.albums = this.playlistService.albums;
       this.playlistService.totalDuration = timeDuration;
 
       /* Setting the artistAlbumMix to be an empty array in case something changed */
@@ -166,7 +140,7 @@ export class RoadTripComponent implements OnInit {
 
       /* This will parse through all the artist's albums/singles that we have set,
             while making sure it doesn't select any album that was deselected in the advanced settings */
-      this.artistsAlbum.forEach((val, key, map) => {
+      this.playlistService.artistsAlbum.forEach((val, key, map) => {
         /* Separtating the albums from the singles to increase priority of albums */
         let onlyArtistAlbum = val.filter(alb => alb.album_group === 'album');
         let onlyArtistSingle = val.filter(alb => alb.album_group !== 'album');
@@ -175,12 +149,11 @@ export class RoadTripComponent implements OnInit {
       });
 
       /* Adding the actual individual albums that the user added to artistAlbumMix */
-      this.playlistService.artistAlbumMix.push(...this.mixAlbums.map(pobject => pobject.items));
+      this.playlistService.artistAlbumMix.push(...this.playlistService.mixAlbums.map(pobject => pobject.items));
 
       /* Place the information inside playlistService */
-      this.playlistService.artistsAlbum = this.artistsAlbum;
-      this.playlistService.artistsAlbumFull = this.artistsAlbumFull;
-      this.playlistService.mixAlbums = this.mixAlbums;
+      this.playlistService.artistsAlbum = this.playlistService.artistsAlbum;
+      this.playlistService.artistsAlbumFull = this.playlistService.artistsAlbumFull;
 
       this.router.navigate(['playlist']);
     }
@@ -188,10 +161,10 @@ export class RoadTripComponent implements OnInit {
 
   /* Reset form self-explanatory */
   reset() {
-    this.artists = [];
-    this.albums = [];
-    this.artistsAlbum = new Map<string, Album[]>();
-    this.artistsAlbumFull = new Map<string, Album[]>();
+    this.playlistService.artists = [];
+    this.playlistService.albums = [];
+    this.playlistService.artistsAlbum = new Map<string, Album[]>();
+    this.playlistService.artistsAlbumFull = new Map<string, Album[]>();
     this.playlistForm.controls['artists'].setValue('');
     this.playlistForm.controls['albums'].setValue('');
     this.playlistForm.controls['explicit'].setValue(true);
@@ -221,26 +194,26 @@ export class RoadTripComponent implements OnInit {
       call this function to add/remove information from artistsAlbum */
   refreshMix($event, artist: string, album: string) {
     if ($event.currentTarget.checked === false) {
-      let albums = this.artistsAlbum.get(artist);
+      let albums = this.playlistService.artistsAlbum.get(artist);
       albums = albums.filter(alb => alb.name !== album)
-      this.artistsAlbum.set(artist, albums);
+      this.playlistService.artistsAlbum.set(artist, albums);
     } else {
-      this.artistsAlbum.get(artist).push(...this.artistsAlbumFull.get(artist).filter(albums => albums.name === album));
+      this.playlistService.artistsAlbum.get(artist).push(...this.playlistService.artistsAlbumFull.get(artist).filter(albums => albums.name === album));
     }
   }
 
   /* Is used for the advanced settings checkbox when a user comes back to the form.
         It will check if the album was selected or not */
   selected(artist: string, album: string) {
-    let albs = this.artistsAlbum.get(artist);
+    let albs = this.playlistService.artistsAlbum.get(artist);
     return albs.find(a => a.name === album) ? true : false;
   }
 
   /* Select/Deselect all the artist's albums in the advanced section */
   selectAll(artist: string) {
-    this.artistsAlbum.set(artist, this.artistsAlbumFull.get(artist));
+    this.playlistService.artistsAlbum.set(artist, this.playlistService.artistsAlbumFull.get(artist));
   }
   deSelectAll(artist: string) {
-    this.artistsAlbum.set(artist, this.artistsAlbumFull.get(artist).filter(a => a.album_group === 'single'));
+    this.playlistService.artistsAlbum.set(artist, this.playlistService.artistsAlbumFull.get(artist).filter(a => a.album_group === 'single'));
   }
 }

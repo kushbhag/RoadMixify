@@ -85,7 +85,6 @@ export class RoadTripPlaylistComponent implements OnInit {
   }
 
   loadPlaylist(): void {
-
     // Get all the albums for the corresponding albums and artists
     forkJoin(this.playlistService.artistAlbumMix.map((mix) => {
       let albumIds = [];

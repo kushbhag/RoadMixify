@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlbumSearch } from '../models/album/album-search.model';
@@ -19,34 +20,18 @@ import { User } from '../models/user.model';
 export class SpotifyService {
   user: User;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private router: Router) {
   }
 
   loggedIn() {
     return !!localStorage.getItem('user');
   }
 
-  // getCurrentPlayback() {
-  //   if (!this.user) {
-  //     this.user = JSON.parse(localStorage.getItem('user'));
-  //   }
-  //   return this.http.get("https://api.spotify.com/v1/me/player", {
-  //     headers: {
-  //       Authorization: 'Bearer ' + this.user.access_token
-  //     }
-  //   });
-  // }
-
-  // getRecentlyPlayed(): Observable<CursorPagingObject> {
-  //   if (!this.user) {
-  //     this.user = JSON.parse(localStorage.getItem('user'));
-  //   }
-  //   return this.http.get<CursorPagingObject>("https://api.spotify.com/v1/me/player/recently-played", {
-  //     headers: {
-  //       Authorization: 'Bearer ' + this.user.access_token
-  //     }
-  //   });
-  // }
+  logOut() {
+    localStorage.removeItem('user');
+    this.router.navigate(['home']);
+  }
 
   // Post
   createPlaylist(id: string, name: string, publicPlaylist: boolean): Observable<Playlist> {

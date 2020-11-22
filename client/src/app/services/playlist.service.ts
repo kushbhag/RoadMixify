@@ -9,13 +9,22 @@ import { PagingObject } from '../models/paging-object.model';
 })
 export class PlaylistService {
 
+  /* Contains the full list of ALL the albums/singles that an artist has */
   artistsAlbumFull: Map<string, Album[]>;
+  /* Contains the selected list of albums/singles that the user selected in advanced settings */
   artistsAlbum: Map<string, Album[]>;
+  /* Contains the actual list of user selected albums in the albums section of form */
   mixAlbums: Array<PagingObject>;
 
-  artistAlbumMix = [];
+  /* Are used when the user comes back to the form page, so that we can load up the artists
+      and albums into the form. Mainly used for displaying on the form */
   artists: Artist[];
   albums: Album[];
+
+  /* Is the parameter that is used to hold an array of all the artists' singles/albums while,
+        while at the same also holding the single albums that the user inputted.
+        The point of this is to organize the data in a way that I can use it when generating the playlist */
+  artistAlbumMix = [];
   timeDuration = [];
   totalDuration: number;
   playListLink: string;
