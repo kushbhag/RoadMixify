@@ -8,8 +8,7 @@ import { SpotifyService } from '../services/spotify.service';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private spotifyService: SpotifyService,
-              private router: Router) { }
+  constructor(private spotifyService: SpotifyService) { }
 
   canActivate(): boolean {
     if (this.spotifyService.loggedIn()) {

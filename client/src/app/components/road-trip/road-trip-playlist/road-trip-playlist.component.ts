@@ -153,7 +153,7 @@ export class RoadTripPlaylistComponent implements OnInit {
     if (this.playlistName.nativeElement.value === '') {
       this.playlistName.nativeElement.value = 'Road Trip Playlist';
     }
-    console.log(this.playlistService.public);
+
     this.spotifyService.getUser().subscribe(val => {
       console.log(this.playlistService.public);
       this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value, this.playlistService.public)
