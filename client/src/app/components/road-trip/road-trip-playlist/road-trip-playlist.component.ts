@@ -154,7 +154,6 @@ export class RoadTripPlaylistComponent implements OnInit {
     }
 
     this.spotifyService.getUser().subscribe(val => {
-      console.log(this.playlistService.public);
       this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value, this.playlistService.public)
       .subscribe((play) => {
         this.playlistService.playListLink = play.external_urls.spotify;

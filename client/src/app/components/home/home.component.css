@@ -1,11 +1,13 @@
 
 .card {
-  margin-top: 20px;
   max-width: 960px;
   min-height: 300px;
-  align-items: center;
+
   justify-content: center;
   text-align: center;
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
   background-color: rgb(40, 40, 40);
 }
 
@@ -15,4 +17,16 @@
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 16px;
+}
+
+p {
+  color: #cccccc;
+}
+
+.info {
+  position: relative;
+  background-color: rgb(24, 24, 24);
+  max-width: 650px;
+  left: 50%;
+  transform: translate(-50%);
 }
