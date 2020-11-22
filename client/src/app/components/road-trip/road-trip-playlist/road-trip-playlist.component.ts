@@ -33,7 +33,6 @@ export class RoadTripPlaylistComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.playlistService.public);
     this.loadPlaylist();
   }
 

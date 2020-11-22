@@ -62,3 +62,8 @@
         width: 100%;
     }
 }
+
+.checkmark {
+    height: 25px;
+    width: 25px;
+}

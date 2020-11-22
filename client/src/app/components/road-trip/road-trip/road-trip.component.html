@@ -157,23 +157,26 @@
                             <div class="col-md-3">
                                 <h6>Artist's Albums: </h6>
                             </div>
-                            <div class="col-md-9">
-                                <table class="table table-sm table-dark" *ngIf="artistsAlbumFull.size > 0">
+                            <div class="col-md-9" style="overflow-x: auto;">
+                                <table class="table table-sm table-dark" *ngIf="artistsAlbumFull.size > 0" style="min-width: 200px;">
                                     <thead>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Albums</th>
+                                            <th scope="col" style="min-width: 100px;">Name</th>
+                                            <th scope="col" style="min-width: 300px;">Albums</th>
                                     </thead>
                                     <tbody>
-                                        <tr class="" *ngFor="let entry of artistsAlbumFull | keyvalue">
+                                        <tr *ngFor="let entry of artistsAlbumFull | keyvalue">
                                             <td class="pl-2">{{entry.key}}</td>
                                             <td>
-                                                <tr *ngFor="let name of (entry.value | albumsOnly)">
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                            <input type="checkbox" checked="checked" (change)="refreshMix($event, entry.key, name)">
+                                                <tr *ngFor="let alb of (entry.value | albumsOnly)">
+                                                    <div class="row ml-2">
+                                                        <div class="col-md-1 col-1">
+                                                            <input type="checkbox" class="checkmark" checked="checked" (change)="refreshMix($event, entry.key, alb.name)">
                                                         </div>
-                                                        <div class="col-md-10">
-                                                            <p>{{name}}</p>
+                                                        <div class="col-md-2 col-2">
+                                                            <img class="image-search ml-3" src="{{alb.images[2].url}}">
+                                                        </div>
+                                                        <div class="col-md-9 col-6">
+                                                            <p class="ml-2">{{alb.name}}</p>
                                                         </div>
                                                     </div>
                                                 </tr>
