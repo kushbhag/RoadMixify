@@ -25,7 +25,7 @@ export class RoadTripPlaylistComponent implements OnInit {
   counts = [1,2,3,4,5,6,7,8,9,10]
   refresh = false;
 
-  constructor(private playlistService: PlaylistService,
+  constructor(public playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
       this.duration = 0;
       this.tracks = [];

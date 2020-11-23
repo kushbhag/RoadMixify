@@ -58,6 +58,10 @@
             </table>
         </div>
         <pagination-controls class="text-light" (pageChange)="currPage = $event"></pagination-controls>
+        <div *ngIf="duration < playlistService.totalDuration" class="alert alert-info" role="alert">
+            The playlist generated does not reach the duration you requested.
+            You can either add the playlist, or go back and add more artists/albums to reach the duration limit.
+        </div>
         <div class="p-3 text-light">
             <ng-container *ngIf="!refresh">
                 <div class="form-group row">
