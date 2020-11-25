@@ -15,48 +15,65 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 })
 export class RoadTripPlaylistComponent implements OnInit {
 
+  /* A form element representing the playlist name */
   @ViewChild('playlistName') playlistName: ElementRef;
 
-  tracks: Track[];
-  refreshTracks: Track[];
-  duration: number;
-
-  currPage = 1;
-  counts = [1,2,3,4,5,6,7,8,9,10]
+  /* The actual tracks of the playlist */
+  tracks: Track[] = new Array<Track>() ;
+  /* Makes a list of all the selected tracks to keep even after the refresh */
+  refreshTracks: Track[] = new Array<Track>();
+  /* Used to know if a refresh has been triggered to switch the UI */
   refresh = false;
+  /* Track the current duration of the playlist */
+  duration = 0;
+
+  /* Pagination control parameters */
+  currPage = 1;
+  itemsPerPage = 10;
 
   constructor(public playlistService: PlaylistService,
               private spotifyService: SpotifyService) {
-      this.duration = 0;
-      this.tracks = [];
-      this.refreshTracks = [];
   }
 
   ngOnInit(): void {
     this.loadPlaylist();
   }
 
+  /* Purpose: Gets all of the tracks IDS stores them into an array
+                It does all of the randomness in the algorithm, and because we
+                don't have all of the images/url's of the tracks I need to
+                get them later in to algorithm
+  */
   getPlaylistTracks(albumArtistMix: any[]): string[] {
+    /* Return object */
     let trackIds = [];
+    /* Set is to ensure that the songs aren't duplicated */
     let trackSet = new Set<string>(this.tracks.map(t => t.name));
     let index = 0;
     // Store the track id's for the songs
     while (this.duration < this.playlistService.totalDuration) {
-      // To ensure that it doesn't run forever
+      /* HARDSTOP; Ensures that it doesn't run forever */
       if (index++ > 10000) {
         break;
       }
+      /* Random number for choosing an artist or an album */
       let indexMix = Math.floor(Math.random() * albumArtistMix.length);
+      /* Random number for selecting the Album (for each artist/album), because each object is an Albums object
+          even if there is only one album it wouldn't matter */
       let indexAlbum = Math.floor(Math.random() * albumArtistMix[indexMix].albums.length);
       const album = albumArtistMix[indexMix].albums[indexAlbum];
       
+      /* Sometimes album objects just aren't defined for artists who are very new */
       if (album === undefined) {
         continue;
       } else {
+        /* The actual index for the track */
         let indexTrack = Math.floor(Math.random() * album.tracks.items.length);
+        /* Rejects the song if it is explicit and user does not want explicit */
         if (!this.playlistService.explicit && album.tracks.items[indexTrack].explicit) {
           continue;
         }
+        /* Pushes the song onto the array, and adds the duration */
         if (!trackSet.has(album.tracks.items[indexTrack].name)) {
           trackIds.push(album.tracks.items[indexTrack].id);
           this.duration += album.tracks.items[indexTrack].duration_ms;
@@ -67,9 +84,14 @@ export class RoadTripPlaylistComponent implements OnInit {
     return trackIds;
   }
 
+  /* Returns an Albums[]
+     Purpose: Is to organize all of the data into only Albums[] so that it
+        is easier to manipulate. It is mostly used the Albums[] objects that
+        exist because of the artists
+  */
   getAlbumArtistMix(albumsList: (Albums | Albums[])[]): any[] {
     let albumArtistMix = [];
-    // Convert the arrays of length 20 into one array
+    /* Convert the arrays of length 20 into one array */
     for (let i = 0; i < albumsList.length; i ++) {
       if ((<Albums>albumsList[i]).albums === undefined) { // For the artists
         let albums = new Albums([]);
@@ -84,18 +106,25 @@ export class RoadTripPlaylistComponent implements OnInit {
     return albumArtistMix;
   }
 
+  /* Once this function is finished running, the playlist will be fully loaded */
   loadPlaylist(): void {
-    // Get all the albums for the corresponding albums and artists
+    /* Forkjoins all the albums/artists' albums into an Observable
+        The Observable will either be of type Albums | Albums []
+        It will be Albums[] because when I am trying to get the tracks/albums
+        of an artist, I can only get arrays of 20 at a time
+        It will be Albums if I am only getting the individual album
+    */ 
     forkJoin(this.playlistService.artistAlbumMix.map((mix) => {
       let albumIds = [];
 
-      // Check if artist / album has no tracks
+      /* Check if artist / album has no tracks */
       if (mix.length === 0) {
         return of(new Albums([]));
       }
 
-      // Go through paging objects to sort them into arrays of 20 (if artist)
-      //  if it is an album, it will simply return
+      /* Go through paging objects to sort them into arrays of 20 (if artist)
+            If it is an album, then it will get placed into an Albums type object
+            and returned as an Observable */
       for (let i = 0; i < mix.length; i += 20) {
         if (mix[i].type === 'album') {
           albumIds.push(mix.slice(i, i+20).map(a => a.id));
@@ -109,22 +138,24 @@ export class RoadTripPlaylistComponent implements OnInit {
         }
       }
 
-      // Return the forkjoined version of all the albums of the artist
+      /* Return the forkjoined version of all the albums of the artist 
+            Essentially creates an Observable<Albums[]> */
       return forkJoin(albumIds.map(a => {
         return this.spotifyService.getAlbums(a);
       }));
     })).subscribe((albumsList) => {
+      /* Organize data into just Albums[] */
       let albumArtistMix = this.getAlbumArtistMix(albumsList);
-
+      /* Actually get the track IDs into a single array */
       let trackIds = this.getPlaylistTracks(albumArtistMix);
 
-      // Split the track id's into groups of 50
+      /* Split the track id's into groups of 50 due to limitations in GET call */
       let subTrackIds = [];
       for (let i = 0; i < trackIds.length; i += 50) {
         subTrackIds.push(trackIds.slice(i, i+50));
       }
 
-      // Get the tracks for all the track id's
+      /* Get the Track object for all the track id's */
       forkJoin(subTrackIds.map(ids => {
         return this.spotifyService.getTracks(ids);
       })).subscribe((tracksList) => {
@@ -138,26 +169,19 @@ export class RoadTripPlaylistComponent implements OnInit {
     this.refresh = false;
   }
 
-  // getAllAlbums(): Observable<Array<PagingObject>> {
-  //   let art$ = this.playlistService.artists.map((a, index) => {
-  //     return this.spotifyService.getArtistsAlbums(a.id);
-  //   });
-  //   let alb$ = this.playlistService.albums.map((a, index) => {
-  //     return this.spotifyService.getAlbumTracks(a.id)
-  //   });
-  //   return forkJoin([...art$, ...alb$]);
-  // }
-
+  /* Purpose: Add the playlist to the user's account */
   addPlaylist(): void {
+    /* Default the playlist name to Road Trip Playlist */
     if (this.playlistName.nativeElement.value === '') {
       this.playlistName.nativeElement.value = 'Road Trip Playlist';
     }
 
+    /* Creates the playlist, and adds the songs 100 at a time to it */
     this.spotifyService.getUser().subscribe(val => {
       this.spotifyService.createPlaylist(val.id, this.playlistName.nativeElement.value, this.playlistService.public)
       .subscribe((play) => {
         this.playlistService.playListLink = play.external_urls.spotify;
-        let trackIds = this.getTrackIds();
+        let trackIds = this.tracks.map(t => t.id);
         for (let i = 0; i<this.tracks.length; i += 100) {
           let subTracks = trackIds.slice(i, i+100);
           this.spotifyService.addToPlaylist(play.id, subTracks).subscribe();
@@ -166,19 +190,13 @@ export class RoadTripPlaylistComponent implements OnInit {
     });
   }
 
-  getTrackIds(): Array<string> {
-    let trackIds = [];
-    for (let track of this.tracks) {
-      trackIds.push(track.id);
-    }
-    return trackIds;
-  }
-
+  /* Remove any track from the playlist */
   removeTrack(index: number): void {
     let deleted = this.tracks.splice(index, 1);
     this.duration -= deleted[0].duration_ms;
   }
 
+  /* Refreshes the playlist based on whatever tracks the user selected */
   hardRefresh(): void {
     this.tracks = this.refreshTracks;
     this.refreshTracks = [];
@@ -189,6 +207,7 @@ export class RoadTripPlaylistComponent implements OnInit {
     this.loadPlaylist();
   }
 
+  /* Add any track that the user selected to refreshTracks */
   addToRefresh(e, track: Track): void {
     if (e.currentTarget.checked === true) {
       this.refreshTracks.push(track);
@@ -197,6 +216,7 @@ export class RoadTripPlaylistComponent implements OnInit {
     }
   }
 
+  /* Used in HTML to ensure the checkboxes are false */
   inRefreshList(track: Track): boolean {
     return !!this.refreshTracks.find(val => val.name === track.name);
   }

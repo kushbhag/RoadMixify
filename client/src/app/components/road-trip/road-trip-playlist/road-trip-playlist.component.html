@@ -10,6 +10,7 @@
     </div>
 </ng-container>
 <div class="container">
+    
     <ng-container *ngIf="tracks.length > 0">
         <div class="outer-table wrapper">
             <table class="table table-dark" cellspacing="0" cellpadding="0">
@@ -24,7 +25,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let j=index;let track of tracks | paginate: { itemsPerPage: 10,
+                    <tr *ngFor="let j=index;let track of tracks | paginate: { itemsPerPage: itemsPerPage,
                                                                               currentPage: currPage,
                                                                               totalItems: tracks.length}">
                         <td *ngIf="refresh" style="margin-left: 10px; width: 5%;">
