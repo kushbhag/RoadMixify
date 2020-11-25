@@ -221,4 +221,14 @@ export class RoadTripPlaylistComponent implements OnInit {
     return !!this.refreshTracks.find(val => val.name === track.name);
   }
 
+  /* Change itemsPerPage */
+  setItemsPerPage($event) {
+    if ($event.srcElement.value === 'All') {
+      this.itemsPerPage = this.tracks.length;
+    } else {
+      this.itemsPerPage = $event.srcElement.value;
+    }
+    this.currPage = 1;
+  }
+
 }

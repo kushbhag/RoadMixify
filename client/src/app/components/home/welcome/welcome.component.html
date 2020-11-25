@@ -1,0 +1,7 @@
+<h2 *ngIf="user">Welcome, {{user.display_name}}!</h2>
+<h5 class="px-1 pb-1">To start making your playlist, click the button below. If you need help, feel free to read the instructions underneath</h5>
+<div class="card-container">
+    <button class="btn btn-success" [routerLink]="['/roadtrip']" style="min-width: 300px;">
+    Create Road Trip Playlist
+    </button>
+</div>

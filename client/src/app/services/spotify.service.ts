@@ -155,6 +155,9 @@ export class SpotifyService {
   }
 
   getUser(): Observable<User> {
+    if (!this.user) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+    }
     return this.http.get<User>("https://api.spotify.com/v1/me", {
       headers: {
         Authorization: 'Bearer ' + this.user.access_token

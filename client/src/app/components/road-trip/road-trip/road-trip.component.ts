@@ -206,7 +206,7 @@ export class RoadTripComponent implements OnInit {
         It will check if the album was selected or not */
   selected(artist: string, album: string) {
     let albs = this.playlistService.artistsAlbum.get(artist);
-    return albs.find(a => a.name === album) ? true : false;
+    return albs.find(a => a.name === album && a.album_group === 'album') ? true : false;
   }
 
   /* Select/Deselect all the artist's albums in the advanced section */
@@ -214,6 +214,7 @@ export class RoadTripComponent implements OnInit {
     this.playlistService.artistsAlbum.set(artist, this.playlistService.artistsAlbumFull.get(artist));
   }
   deSelectAll(artist: string) {
-    this.playlistService.artistsAlbum.set(artist, this.playlistService.artistsAlbumFull.get(artist).filter(a => a.album_group === 'single'));
+    this.playlistService.artistsAlbum.set(artist, this.playlistService.artistsAlbumFull.get(artist)
+      .filter(a => a.album_type !== 'album' && a.album_group !== 'album'));
   }
 }

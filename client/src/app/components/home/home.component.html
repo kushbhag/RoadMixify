@@ -1,15 +1,10 @@
 
 <div class="card text-light mt-3">
-  <h2>Welcome to Road Mixify!</h2>
   <ng-container *ngIf="spotifyService.loggedIn()">
-    <h5>A new way to make the perfect playlist for your next roadtrip</h5>
-    <div class="card-container">
-      <button class="btn btn-success" [routerLink]="['/roadtrip']" style="min-width: 300px;">
-        Create Road Trip Playlist
-      </button>
-    </div>
+    <app-welcome></app-welcome>
   </ng-container>
   <ng-container *ngIf="!spotifyService.loggedIn()">
+    <h2>Welcome to Road Mixify!</h2>
     <h5>To get started, login to your spotify account</h5>
     <div class="card-container">
       <button class="btn btn-success" (click)="login()" style="min-width: 300px; min-height: 50px;">
@@ -18,7 +13,7 @@
     </div>
   </ng-container>
 </div>
-<div *ngIf="spotifyService.loggedIn()" class="info mt-3">
+<div class="info mt-3">
   <table class="table text-light">
     <tbody>
       <tr>
@@ -31,7 +26,7 @@
         <td class="pl-3 pt-3">
           <h4>Your Personalized Playlist Generator</h4>
           <p>
-            Let's get started on creating the perfect playlist for your next road-trip, workout, or event.
+            Let's get started on creating the perfect playlist for your next road trip, workout, or event.
           </p>
         </td>
       </tr>

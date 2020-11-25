@@ -20,6 +20,7 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { CacheService } from './services/cache.service';
 import { AlbumOnlyPipe } from './pipe/albums.pipe';
+import { WelcomeComponent } from './components/home/welcome/welcome.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { AlbumOnlyPipe } from './pipe/albums.pipe';
     PostPlaylistComponent,
     HeaderComponent,
     FooterComponent,
-    AlbumOnlyPipe
+    AlbumOnlyPipe,
+    WelcomeComponent
   ],
   imports: [
     CommonModule,
