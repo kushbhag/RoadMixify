@@ -24,6 +24,7 @@
                 <thead>
                     <tr>
                         <th *ngIf="refresh" span="1" style="width: 5%;"></th>
+                        <th>#</th>
                         <th>Image</th>
                         <th style="min-width: 150px;">Title</th>
                         <th style="min-width: 150px;">Artist</th>
@@ -37,6 +38,9 @@
                                                                               totalItems: tracks.length}">
                         <td *ngIf="refresh" style="margin-left: 10px; width: 5%;">
                             <input type="checkbox" [checked]="inRefreshList(track)" (change)="addToRefresh($event, track, j)">
+                        </td>
+                        <td>
+                            <h5>{{(j+1)+((currPage-1)*itemsPerPage)}}</h5>
                         </td>
                         <td>
                             <img src="{{track.album.images[2].url}}">
