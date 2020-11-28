@@ -1,4 +1,4 @@
-<ng-container *ngIf="tracks.length === 0">
+<ng-container *ngIf="tracks.length === 0 && refresh">
     <div style="position: absolute; left: 50%;
                 transform: translate(-50%); height: 120px;
                 width: 120px; text-align: center; top: 30%;
@@ -10,7 +10,7 @@
     </div>
 </ng-container>
 <div class="container">
-    <ng-container *ngIf="tracks.length > 0">
+    <ng-container *ngIf="!(tracks.length === 0 && refresh)">
         <select name="cars" id="cars" class="btn btn-success dropdown-toggle"
                 (change)="setItemsPerPage($event)">
             <option value="" disabled selected>Items Per Page</option>
@@ -26,7 +26,28 @@
                         <th *ngIf="refresh" span="1" style="width: 5%;"></th>
                         <th>#</th>
                         <th>Image</th>
-                        <th style="min-width: 150px;">Title</th>
+                        <th appSort (changeSort)="this.sortDirection = $event" [sortDirection]="sortDirection" [sortArray]="tracks"
+                            class="pl-1" style="min-width: 150px;" (click)="this.currPage = 1;">
+                            Title
+                            <ng-container *ngIf="sortDirection === 'ascending'">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    width="24" height="24"
+                                    viewBox="0 0 172 172"
+                                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M13.76,58.48l72.24,75.68l72.24,-75.68z"></path></g></g></svg>
+                            </ng-container>
+                            <ng-container *ngIf="sortDirection === 'descending'">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    width="24" height="24"
+                                    viewBox="0 0 172 172"
+                                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#ffffff"><path d="M86,44.72l-72.24,75.68h144.48z"></path></g></g></svg>
+                            </ng-container>
+                            <ng-container *ngIf="sortDirection === 'none'">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    width="24" height="24"
+                                    viewBox="0 0 172 172"
+                                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M86,10.32l-61.92,65.36h123.84zM24.08,89.44l61.92,65.36l61.92,-65.36z"></path></g></g></svg>
+                            </ng-container>
+                        </th>
                         <th style="min-width: 150px;">Artist</th>
                         <th>Duration</th>
                         <th></th>

@@ -21,6 +21,7 @@ import { CacheInterceptor } from './interceptors/cache.interceptor';
 import { CacheService } from './services/cache.service';
 import { AlbumOnlyPipe } from './pipe/albums.pipe';
 import { WelcomeComponent } from './components/home/welcome/welcome.component';
+import { SortDirective } from './directives/sort.directive';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { WelcomeComponent } from './components/home/welcome/welcome.component';
     HeaderComponent,
     FooterComponent,
     AlbumOnlyPipe,
-    WelcomeComponent
+    WelcomeComponent,
+    SortDirective
   ],
   imports: [
     CommonModule,

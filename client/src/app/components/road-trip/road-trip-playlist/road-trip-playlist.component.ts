@@ -23,9 +23,11 @@ export class RoadTripPlaylistComponent implements OnInit {
   /* Makes a list of all the selected tracks to keep even after the refresh */
   refreshTracks: Track[] = new Array<Track>();
   /* Used to know if a refresh has been triggered to switch the UI */
-  refresh = false;
+  refresh = true;
   /* Track the current duration of the playlist */
   duration = 0;
+  /* Sorting Direction */
+  sortDirection = 'none';
 
   /* Pagination control parameters */
   currPage = 1;
@@ -164,9 +166,9 @@ export class RoadTripPlaylistComponent implements OnInit {
             this.tracks.push(t);
           }
         }
+        this.refresh = false;
       });
     })
-    this.refresh = false;
   }
 
   /* Purpose: Add the playlist to the user's account */
