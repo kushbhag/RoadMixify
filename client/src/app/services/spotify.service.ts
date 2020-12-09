@@ -12,6 +12,7 @@ import { PagingObject } from '../models/paging-object.model';
 import { Playlist } from '../models/playlist.model';
 import { Track } from '../models/track.model';
 import { Tracks } from '../models/tracks.model';
+import { TrackSearch } from '../models/tracks/track-search.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -91,7 +92,7 @@ export class SpotifyService {
     } else {
       return this.getTrack(item.id);
     }
-  } 
+  }
 
   getAlbumTracks(id: string): Observable<PagingObject> {
     return this.http.get<PagingObject> ("https://api.spotify.com/v1/albums/"+id+"/tracks", {
@@ -170,6 +171,24 @@ export class SpotifyService {
       params: {
         refresh_token: this.user.refresh_token
       }
+    });
+  }
+
+  getRecommendations(ids: string[]): Observable<any> {
+    let fullQuery: string = '';
+    for (let i = 0; i < ids.length; i ++) {
+      fullQuery += ids[i];
+      if (i + 1 < ids.length) {
+        fullQuery += ',';
+      }
+    }
+    return this.http.get<any>("	https://api.spotify.com/v1/recommendations", {
+      params: {
+        seed_tracks: fullQuery
+      },
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
     })
   }
 
@@ -196,6 +215,18 @@ export class SpotifyService {
     }
     let url = 'https://api.spotify.com/v1/search?type=album&limit=' + limit.toString() + '&q=' + this.searchString(search);
     return this.http.get<AlbumSearch>(url, {
+      headers: {
+        Authorization: 'Bearer ' + this.user.access_token
+      }
+    });
+  }
+
+  searchTrack(search: string, limit: number): Observable<TrackSearch> {
+    if (!this.user) {
+      this.user = JSON.parse(localStorage.getItem('user'));
+    }
+    let url = 'https://api.spotify.com/v1/search?type=track&limit=' + limit.toString() + '&q=' + this.searchString(search);
+    return this.http.get<TrackSearch>(url, {
       headers: {
         Authorization: 'Bearer ' + this.user.access_token
       }

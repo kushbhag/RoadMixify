@@ -22,6 +22,7 @@ import { CacheService } from './services/cache.service';
 import { AlbumOnlyPipe } from './pipe/albums.pipe';
 import { WelcomeComponent } from './components/home/welcome/welcome.component';
 import { SortDirective } from './directives/sort.directive';
+import { PlaylistGeneratorComponent } from './components/playlist-generator/playlist-generator.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { SortDirective } from './directives/sort.directive';
     FooterComponent,
     AlbumOnlyPipe,
     WelcomeComponent,
-    SortDirective
+    SortDirective,
+    PlaylistGeneratorComponent
   ],
   imports: [
     CommonModule,

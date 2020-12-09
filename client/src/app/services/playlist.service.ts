@@ -3,6 +3,7 @@ import { Album } from '../models/album/album.model';
 import { Albums } from '../models/albums.model';
 import { Artist } from '../models/artist/artist.model';
 import { PagingObject } from '../models/paging-object.model';
+import { Track } from '../models/track.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,8 @@ export class PlaylistService {
       and albums into the form. Mainly used for displaying on the form */
   artists: Artist[];
   albums: Album[];
+  /* This is used for the playlist generator */
+  tracks: Track[];
 
   /* Is the parameter that is used to hold an array of all the artists' singles/albums while,
         while at the same also holding the single albums that the user inputted.
@@ -34,6 +37,7 @@ export class PlaylistService {
   constructor() {
     this.artists = [];
     this.albums = [];
+    this.tracks = [];
     this.artistsAlbumFull = new Map<string, Album[]>();
     this.artistsAlbum = new Map<string, Album[]>();
     this.mixAlbums = new Array<PagingObject>();

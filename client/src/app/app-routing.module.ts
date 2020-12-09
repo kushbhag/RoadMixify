@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
+import { PlaylistGeneratorComponent } from './components/playlist-generator/playlist-generator.component';
 import { PostPlaylistComponent } from './components/post-playlist/post-playlist.component';
 import { RoadTripPlaylistComponent } from './components/road-trip/road-trip-playlist/road-trip-playlist.component';
 import { RoadTripComponent } from './components/road-trip/road-trip/road-trip.component';
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'roadtrip', component: RoadTripComponent, canActivate: [AuthGuard] },
   { path: 'playlist', component: RoadTripPlaylistComponent, canActivate: [AuthGuard, PlaylistGuard] },
   { path: 'final', component: PostPlaylistComponent, canActivate: [AuthGuard, PlaylistGuard] },
+  { path: 'generator', component: PlaylistGeneratorComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];
 

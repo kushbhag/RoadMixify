@@ -1,0 +1,53 @@
+<div class="card-body">
+    <form [formGroup]="playlistForm"
+        (ngSubmit)="generate()">
+        <div class="form-group row">
+            <input class="form-control form-input text-light border-dark"
+                    type="text"
+                    placeholder="Track Name"
+                    formControlName="track"
+                    autocomplete="off">
+            <div class="dropdown">
+                <div *ngFor="let s of searchResult">
+                    <button class="form-control form-input text-light border-dark"
+                        (click)="addTrack(s)"
+                        type="button"  style="height:auto;">
+                        <img class="image-search" src="{{s.album.images[2]?.url}}">
+                        {{s.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row table-data" style="overflow-x: auto;">
+            <table *ngIf="playlistService.tracks.length > 0" class="table table-dark">
+                <thead>
+                    <th scope="col">Image</th>
+                    <th scope="col">Track</th>
+                    <th scope="col"></th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let t of playlistService.tracks; let i=index">
+                        <td scope="row">
+                            <img class="image-cover" src="{{t.album.images[2]?.url}}">
+                        </td>
+                        <td>{{t.name}}</td>
+                        <td>
+                            <button class="btn btn-danger"
+                                type="button"
+                                (click)="removeTrack(i)">
+                                Remove
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group row">
+            <button class="btn btn-success bottom-btn"
+                    type="submit"
+                    [title]="'Submit'">
+                Submit
+            </button>
+        </div>
+    </form>
+</div>
