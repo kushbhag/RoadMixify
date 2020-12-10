@@ -22,7 +22,8 @@ import { CacheService } from './services/cache.service';
 import { AlbumOnlyPipe } from './pipe/albums.pipe';
 import { WelcomeComponent } from './components/home/welcome/welcome.component';
 import { SortDirective } from './directives/sort.directive';
-import { PlaylistGeneratorComponent } from './components/playlist-generator/playlist-generator.component';
+import { PlaylistGeneratorComponent } from './components/playlist-generator/playlist-generator/playlist-generator.component';
+import { PlaylistGeneratorPlaylistComponent } from './components/playlist-generator/playlist-generator-playlist/playlist-generator-playlist.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { PlaylistGeneratorComponent } from './components/playlist-generator/play
     AlbumOnlyPipe,
     WelcomeComponent,
     SortDirective,
-    PlaylistGeneratorComponent
+    PlaylistGeneratorComponent,
+    PlaylistGeneratorPlaylistComponent
   ],
   imports: [
     CommonModule,

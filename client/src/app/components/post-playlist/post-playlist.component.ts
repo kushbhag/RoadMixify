@@ -15,6 +15,7 @@ export class PostPlaylistComponent implements OnInit {
   ngOnInit(): void {
     this.playlistService.albums = [];
     this.playlistService.artists = [];
+    this.playlistService.tracks = [];
     this.playlistService.timeDuration = [];
     this.playlistService.totalDuration = 0;
     this.playlistService.artistsAlbumFull = new Map<string, Album[]>();

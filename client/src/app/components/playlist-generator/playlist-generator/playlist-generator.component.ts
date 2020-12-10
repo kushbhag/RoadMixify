@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Track } from 'src/app/models/track.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
 import { SpotifyService } from 'src/app/services/spotify.service';
@@ -17,7 +18,8 @@ export class PlaylistGeneratorComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private spotifyService: SpotifyService,
-              public playlistService: PlaylistService) { }
+              public playlistService: PlaylistService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.playlistForm = this.fb.group({
@@ -29,13 +31,7 @@ export class PlaylistGeneratorComponent implements OnInit {
   }
 
   generate(): void {
-    let ids = new Array<string> ();
-    for (let track of this.playlistService.tracks) {
-      ids.push(track.id);
-    }
-    this.spotifyService.getRecommendations(ids).subscribe(val => {
-      console.log(val);
-    });
+    this.router.navigate(['generator/playlist']);
   }
 
   addTrack(track: Track): void {
@@ -51,7 +47,6 @@ export class PlaylistGeneratorComponent implements OnInit {
       this.searchResult = [];
     } else if (searchColumn === 'track') {
       this.spotifyService.searchTrack(searchField, 5).subscribe((val) => {
-        console.log(val);
         this.searchResult = val.tracks.items;
       });
     }

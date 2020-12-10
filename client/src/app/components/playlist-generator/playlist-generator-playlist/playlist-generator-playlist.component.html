@@ -1,0 +1,113 @@
+<ng-container *ngIf="tracks.length === 0">
+    <div style="position: absolute; left: 50%;
+                transform: translate(-50%); height: 120px;
+                width: 120px; text-align: center; top: 30%;
+                color: rgb(210, 210, 210);">
+        <label for="loader">
+            <h3>Loading Playlist</h3>
+        </label>
+        <div id="loader" class="loader"></div>
+    </div>
+</ng-container>
+<div class="container">
+    <ng-container *ngIf="!(tracks.length === 0)">
+        <select name="cars" id="cars" class="btn btn-success dropdown-toggle"
+                (change)="setItemsPerPage($event)">
+            <option value="" disabled selected>Items Per Page</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="All">All</option>
+        </select>
+        <div class="outer-table wrapper">
+            <table class="table table-dark" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th appSort (changeSort)="this.sortDirection = $event" [sortDirection]="sortDirection" [sortArray]="tracks"
+                            class="pl-1" style="min-width: 150px;" (click)="this.currPage = 1;">
+                            Title
+                            <ng-container *ngIf="sortDirection === 'ascending'">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    width="24" height="24"
+                                    viewBox="0 0 172 172"
+                                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M13.76,58.48l72.24,75.68l72.24,-75.68z"></path></g></g></svg>
+                            </ng-container>
+                            <ng-container *ngIf="sortDirection === 'descending'">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    width="24" height="24"
+                                    viewBox="0 0 172 172"
+                                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g id="original-icon" fill="#ffffff"><path d="M86,44.72l-72.24,75.68h144.48z"></path></g></g></svg>
+                            </ng-container>
+                            <ng-container *ngIf="sortDirection === 'none'">
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    width="24" height="24"
+                                    viewBox="0 0 172 172"
+                                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M86,10.32l-61.92,65.36h123.84zM24.08,89.44l61.92,65.36l61.92,-65.36z"></path></g></g></svg>
+                            </ng-container>
+                        </th>
+                        <th style="min-width: 150px;">Artist</th>
+                        <th>Duration</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let j=index;let track of tracks | paginate: { itemsPerPage: itemsPerPage,
+                                                                              currentPage: currPage,
+                                                                              totalItems: tracks.length}">
+                        <td>
+                            <h5>{{(j+1)+((currPage-1)*itemsPerPage)}}</h5>
+                        </td>
+                        <td>
+                            <img src="{{track.album.images[2].url}}">
+                        </td>
+                        <td>{{track.name}}</td>
+                        <td>
+                            <!-- <ng-container *ngFor="let artist of track.artists; let i=index">{{artist.name}}<ng-container *ngIf="i < track.artists.length-1">, </ng-container></ng-container> -->
+                        </td>
+                        <td>{{track.duration_ms | date:'mm:ss'}}</td>
+                        <td>
+                            <button class="btn btn-danger" (click)="removeTrack(j)">Remove</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            Total Songs: {{tracks.length}}
+                        </td>
+                        <td>
+                            Total Duration: {{ duration + 18000000 | date:'HH:mm:ss'}}
+                        </td>
+                        <!-- <td *ngIf="refresh"></td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <pagination-controls class="text-light" (pageChange)="currPage = $event"></pagination-controls>
+        <div class="p-3 text-light">
+            <div class="form-group row">
+                <div class="col-3 col-md-2">
+                    <label for="playlistName" class="h5">Playlist Name:</label>
+                </div>
+                <div class="col-9 col-md-7">
+                    <input #playlistName type="text" class="form-control form-input text-light border-dark" id="playlistName" placeholder="Road Trip Playlist">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-4">
+                    <button class="btn btn-success bottom-button" (click)="addPlaylist()"[routerLink]="'/final'">
+                        Add Playlist
+                    </button>
+                </div>
+                <div class="col-12 col-md-4">
+                    <button class="btn btn-danger bottom-button">
+                        Refresh Playlist
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>

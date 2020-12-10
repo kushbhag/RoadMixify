@@ -1,0 +1,40 @@
+.bottom-button {
+    width: 100%;
+  }
+  
+  .container {
+    margin: 20px 0 20px;
+  }
+  
+  .form-input {
+    background-color: rgb(33, 33, 33);
+  }
+  
+  .loader {
+      position: relative;
+      border: 16px solid #212121; /* Light grey */
+      border-top: 16px solid #1db954; /* Blue */
+      border-bottom: 16px solid #1db954;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+  }
+  
+  .outer-table {
+    overflow-x: auto;
+  }
+  
+  @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+  
+  input[type=checkbox]
+  {
+    /* Double-sized Checkboxes */
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(2); /* Safari and Chrome */
+    -o-transform: scale(2); /* Opera */
+  }

@@ -155,7 +155,7 @@ export class RoadTripComponent implements OnInit {
       this.playlistService.artistsAlbum = this.playlistService.artistsAlbum;
       this.playlistService.artistsAlbumFull = this.playlistService.artistsAlbumFull;
 
-      this.router.navigate(['playlist']);
+      this.router.navigate(['roadtrip/playlist']);
     }
   }
 

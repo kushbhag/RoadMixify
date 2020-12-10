@@ -11,7 +11,9 @@ export class PlaylistGuard implements CanActivate {
               private router: Router) { }
 
   canActivate(): boolean {
-    if (this.playlistService.albums.length === 0 && this.playlistService.artists.length === 0) {
+    if (this.playlistService.albums.length === 0 &&
+        this.playlistService.artists.length === 0 &&
+        this.playlistService.tracks.length === 0) {
       this.router.navigate(['home']);
       return false;
     }
