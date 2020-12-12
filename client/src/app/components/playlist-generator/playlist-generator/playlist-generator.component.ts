@@ -14,6 +14,9 @@ export class PlaylistGeneratorComponent implements OnInit {
   /* Playlist form for the tracks */
   playlistForm: FormGroup;
 
+  /* Error message in case the user inputs too many tracks */
+  errorMessage = '';
+
   searchResult = [];
 
   constructor(private fb: FormBuilder,
@@ -31,11 +34,20 @@ export class PlaylistGeneratorComponent implements OnInit {
   }
 
   generate(): void {
-    this.router.navigate(['generator/playlist']);
+    if (this.playlistService.tracks.length > 5) {
+      this.errorMessage = 'Sorry, you can only input a maximum of 5 tracks';
+    } else if (this.playlistService.tracks.length === 0) {
+      this.errorMessage = 'Please input atleast one track';
+    } else {
+      this.router.navigate(['generator/playlist']);
+    }
   }
 
   addTrack(track: Track): void {
-    this.playlistService.tracks.push(track);
+    if (this.playlistService.tracks.find(t => t.name === track.name) === undefined) {
+      this.playlistService.tracks.push(track);
+    }
+    this.playlistForm.controls['track'].setValue('');
   }
 
   removeTrack(index: number): void {
@@ -52,4 +64,11 @@ export class PlaylistGeneratorComponent implements OnInit {
     }
   }
 
+  reset(): void {
+    this.playlistService.tracks = [];
+  }
+
+  setNumberOfSongs($event): void {
+    this.playlistService.numOfTracks = $event.srcElement.value;
+  }
 }

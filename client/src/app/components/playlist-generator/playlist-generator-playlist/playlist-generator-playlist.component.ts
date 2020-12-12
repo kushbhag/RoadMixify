@@ -30,6 +30,21 @@ export class PlaylistGeneratorPlaylistComponent implements OnInit {
     this.generatePlaylist();
   }
 
+  generatePlaylist(): void {
+    let ids = new Array<string> ();
+    for (let track of this.playlistService.tracks) {
+      ids.push(track.id);
+    }
+    if (ids.length > 0) {
+      this.spotifyService.getRecommendations(ids, this.playlistService.numOfTracks).subscribe(val => {
+        this.tracks = val.tracks;
+        for (let track of val.tracks) {
+          this.duration += track.duration_ms;
+        }
+      });
+    }
+  }
+
   addPlaylist(): void {
     if (this.playlistName.nativeElement.value === '') {
       this.playlistName.nativeElement.value = 'Road Trip Playlist';
@@ -49,21 +64,9 @@ export class PlaylistGeneratorPlaylistComponent implements OnInit {
     });
   }
 
-  generatePlaylist(): void {
-    let ids = new Array<string> ();
-    for (let track of this.playlistService.tracks) {
-      ids.push(track.id);
-    }
-    if (ids.length > 0) {
-      this.spotifyService.getRecommendations(ids).subscribe(val => {
-        this.tracks = val.tracks;
-        console.log(this.tracks);
-      });
-    }
-  }
-
   removeTrack(index: number): void {
-    this.tracks.splice(index, 1);
+    let deleted = this.tracks.splice(index, 1);
+    this.duration -= deleted[0].duration_ms;
   }
 
   /* Change itemsPerPage */

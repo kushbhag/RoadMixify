@@ -1,7 +1,17 @@
 <h2>Welcome<ng-container *ngIf="user">, {{user.display_name}}</ng-container>!</h2>
-<h5 class="px-2 pb-1">To start making your playlist, click the button below. If you need help, feel free to read the instructions underneath</h5>
+<div class="px-3 pb-1" style="font-size: 18px;">To start making your playlist, click the button below. If you need any help,
+    there are instructions below to help you get started
+</div>
 <div class="card-container">
     <button class="btn btn-success" [routerLink]="['/roadtrip']" style="min-width: 300px;">
-    Create Road Trip Playlist
+    <h5>Create Road Trip Playlist</h5>
+    </button>
+</div>
+<div class="pt-5 px-2 pb-1">
+    Or perhaps try making a playlist based on your favorite tracks
+</div>
+<div class="card-container">
+    <button class="btn btn-secondary" [routerLink]="['/generator']"  style="min-width: 300px;">
+        Playlist Generator
     </button>
 </div>

@@ -16,6 +16,7 @@ export class PostPlaylistComponent implements OnInit {
     this.playlistService.albums = [];
     this.playlistService.artists = [];
     this.playlistService.tracks = [];
+    this.playlistService.numOfTracks = '20';
     this.playlistService.timeDuration = [];
     this.playlistService.totalDuration = 0;
     this.playlistService.artistsAlbumFull = new Map<string, Album[]>();

@@ -21,6 +21,9 @@ export class CacheInterceptor implements HttpInterceptor {
       this.cacheService.invalidateCache();
       return next.handle(req);
     }
+    if (req.url === 'https://api.spotify.com/v1/recommendations') {
+      return next.handle(req);
+    }
 
     // attempt to retrieve a cached response
     const cachedResponse = this.cacheService.get(req);

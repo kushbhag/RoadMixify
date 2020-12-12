@@ -174,7 +174,7 @@ export class SpotifyService {
     });
   }
 
-  getRecommendations(ids: string[]): Observable<any> {
+  getRecommendations(ids: string[], numOfTracks: string): Observable<any> {
     let fullQuery: string = '';
     for (let i = 0; i < ids.length; i ++) {
       fullQuery += ids[i];
@@ -182,9 +182,10 @@ export class SpotifyService {
         fullQuery += ',';
       }
     }
-    return this.http.get<any>("	https://api.spotify.com/v1/recommendations", {
+    return this.http.get<any>("https://api.spotify.com/v1/recommendations", {
       params: {
-        seed_tracks: fullQuery
+        seed_tracks: fullQuery,
+        limit: numOfTracks
       },
       headers: {
         Authorization: 'Bearer ' + this.user.access_token

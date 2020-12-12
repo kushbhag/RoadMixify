@@ -11,7 +11,7 @@
 </ng-container>
 <div class="container">
     <ng-container *ngIf="!(tracks.length === 0)">
-        <select name="cars" id="cars" class="btn btn-success dropdown-toggle"
+        <select class="btn btn-success dropdown-toggle"
                 (change)="setItemsPerPage($event)">
             <option value="" disabled selected>Items Per Page</option>
             <option value="10">10</option>
@@ -64,7 +64,7 @@
                         </td>
                         <td>{{track.name}}</td>
                         <td>
-                            <!-- <ng-container *ngFor="let artist of track.artists; let i=index">{{artist.name}}<ng-container *ngIf="i < track.artists.length-1">, </ng-container></ng-container> -->
+                            <ng-container *ngFor="let artist of track.artists; let i=index">{{artist.name}}<ng-container *ngIf="i < track.artists.length-1">, </ng-container></ng-container>
                         </td>
                         <td>{{track.duration_ms | date:'mm:ss'}}</td>
                         <td>
@@ -100,11 +100,6 @@
                 <div class="col-12 col-md-4">
                     <button class="btn btn-success bottom-button" (click)="addPlaylist()"[routerLink]="'/final'">
                         Add Playlist
-                    </button>
-                </div>
-                <div class="col-12 col-md-4">
-                    <button class="btn btn-danger bottom-button">
-                        Refresh Playlist
                     </button>
                 </div>
             </div>

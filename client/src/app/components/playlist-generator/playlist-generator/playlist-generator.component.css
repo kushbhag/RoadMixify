@@ -1,3 +1,7 @@
+.bottom-btn {
+    width: 100%;
+}
+
 .card {
     background-color: rgb(40, 40, 40);
     color: rgb(210, 210, 210);
@@ -5,6 +9,10 @@
 
 .card-header {
     background-color: rgb(33, 33, 33);
+}
+
+.container {
+    margin-top: 10px;
 }
 
 .dropdown {
@@ -23,4 +31,14 @@
 .image-search {
     height: 25px;
     width: auto;
+}
+
+.table-data {
+    width: 80%;
+    margin-left: 50%;
+    transform: translate(-50%);
+}
+
+.table > thead > th {
+    padding: 10px;
 }

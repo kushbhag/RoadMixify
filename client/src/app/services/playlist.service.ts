@@ -23,6 +23,7 @@ export class PlaylistService {
   albums: Album[];
   /* This is used for the playlist generator */
   tracks: Track[];
+  numOfTracks = '20';
 
   /* Is the parameter that is used to hold an array of all the artists' singles/albums while,
         while at the same also holding the single albums that the user inputted.
