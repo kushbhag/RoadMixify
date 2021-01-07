@@ -36,11 +36,13 @@ export class SortDirective implements AfterViewInit {
         }
       });
     } else {
-      this.sortDirection = 'none';
-      let i = 0;
-      this.originalArray.forEach(val => {
-        this.sortArray[i] = val;
-        i++;
+      this.sortDirection = 'ascending';
+      this.sortArray.sort((n, m) => {
+        if (n.name.toLocaleLowerCase() > m.name.toLocaleLowerCase()) {
+          return 1;
+        } else {
+          return -1;
+        }
       });
     }
     this.changeSort.emit(this.sortDirection);

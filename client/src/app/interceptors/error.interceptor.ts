@@ -27,7 +27,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         // if (error.error instanceof ErrorEvent) {
 
         // }
-        if (error.status === 400 || error.status === 401) {
+        if (error.status === 401) { // I removed 400 here?
           if (this.spotifyService.loggedIn()) {
             console.log('Refreshing User Access Token');
             this.spotifyService.refresh().subscribe(
@@ -47,7 +47,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               }
             );
           }
-        } else {
+        } else if (error.status !== 400) { // 400 is just bad request
           console.log('Removing User');
           console.log(error);
           localStorage.removeItem('user');

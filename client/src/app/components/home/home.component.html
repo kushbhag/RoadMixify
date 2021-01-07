@@ -4,13 +4,26 @@
     <app-welcome></app-welcome>
   </ng-container>
   <ng-container *ngIf="!spotifyService.loggedIn()">
-    <h2>Welcome to Road Mixify!</h2>
-    <h5>To get started, login to your spotify account</h5>
-    <div class="card-container">
-      <button class="btn btn-success" (click)="login()" style="min-width: 300px; min-height: 50px;">
-        <h5>Login</h5>
-      </button>
-    </div>
+    <ng-container *ngIf="!loggingIn">
+      <h2>Welcome to Road Mixify!</h2>
+      <h5>To get started, login to your spotify account</h5>
+      <div class="card-container">
+        <button class="btn btn-success" (click)="login()" style="min-width: 300px; min-height: 50px;">
+          <h5>Login</h5>
+        </button>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="loggingIn">
+      <div style="position: absolute; left: 50%;
+                transform: translate(-50%); height: 120px;
+                width: 200px; text-align: center; top: 30%;
+                color: rgb(210, 210, 210);">
+        <label for="loader">
+            <h3>Logging in...</h3>
+        </label>
+        <div id="loader" class="loader" style="left: 35px;"></div>
+      </div>
+    </ng-container>
   </ng-container>
 </div>
 <div class="info mt-3">

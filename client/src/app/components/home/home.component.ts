@@ -9,6 +9,7 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 })
 export class HomeComponent implements OnInit {
 
+  loggingIn = false;
   constructor(public spotifyService: SpotifyService) { }
 
   ngOnInit(): void {
@@ -36,6 +37,7 @@ export class HomeComponent implements OnInit {
   }
 
   login(): void {
+    this.loggingIn = true;
     window.location.href = 'https://road-mixify-server.herokuapp.com/login';
   }
 

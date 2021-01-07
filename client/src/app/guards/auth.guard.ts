@@ -8,14 +8,15 @@ import { SpotifyService } from '../services/spotify.service';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private spotifyService: SpotifyService) { }
+  constructor(private spotifyService: SpotifyService,
+              private router: Router) { }
 
   canActivate(): boolean {
     if (this.spotifyService.loggedIn()) {
       return true;
     } else {
-      window.location.href = 'https://road-mixify-server.herokuapp.com/login';
-      // this.router.navigate(['/home']);
+      // window.location.href = 'https://road-mixify-server.herokuapp.com/login';
+      this.router.navigate(['/home']);
       return false;
     }
   }
