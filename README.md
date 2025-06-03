@@ -27,7 +27,7 @@ Each access token is unique depending on the authorization scopes that I request
 2. <a href="https://developer.spotify.com/documentation/general/guides/scopes/">playlist-modify-public</a>
 3. <a href="https://developer.spotify.com/documentation/general/guides/scopes/">playlist-modify-private</a>
 
-The server was deployed using <a href="https://www.heroku.com/">Heroku</a>, and it's only purposes is logging in, and refreshing the access token. Full documentation for authorization
+The server was deployed using <a href="https://render.com/">Render</a>, and it's only purposes is logging in, and refreshing the access token. Full documentation for authorization
 can be found on the <a href="https://developer.spotify.com/documentation/general/guides/authorization-guide/">Spotify website</a>.
 
 ---

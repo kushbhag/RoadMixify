@@ -37,7 +37,7 @@
         </ul>
         <ul class="navbar-nav navbar-right my-2">
             <li class="nav-item">
-                <a *ngIf="!spotifyService.loggedIn()" class="nav-link" href="https://road-mixify-server.herokuapp.com/login">
+                <a *ngIf="!spotifyService.loggedIn()" class="nav-link" href="https://roadmixifyserver.onrender.com/login">
                     Login
                 </a>
                 <a *ngIf="spotifyService.loggedIn()" class="nav-link" (click)="spotifyService.logOut()" href="javascript:void(0)">

@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit {
 
   login(): void {
     this.loggingIn = true;
-    window.location.href = 'https://road-mixify-server.herokuapp.com/login';
+    window.location.href = 'https://roadmixifyserver.onrender.com/login';
   }
 
 }
