@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Album } from 'src/app/models/album/album.model';
 import { PagingObject } from 'src/app/models/paging-object.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
@@ -6,7 +7,10 @@ import { PlaylistService } from 'src/app/services/playlist.service';
 @Component({
   selector: 'app-post-playlist',
   templateUrl: './post-playlist.component.html',
-  styleUrls: ['./post-playlist.component.css']
+  styleUrls: ['./post-playlist.component.css'],
+  imports: [
+    RouterModule
+  ]
 })
 export class PostPlaylistComponent implements OnInit {
 

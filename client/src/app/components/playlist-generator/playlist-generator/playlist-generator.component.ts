@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Track } from 'src/app/models/track.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
@@ -8,7 +8,10 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 @Component({
   selector: 'app-playlist-generator',
   templateUrl: './playlist-generator.component.html',
-  styleUrls: ['./playlist-generator.component.css']
+  styleUrls: ['./playlist-generator.component.css'],
+  imports: [
+    ReactiveFormsModule
+  ]
 })
 export class PlaylistGeneratorComponent implements OnInit {
   /* Playlist form for the tracks */

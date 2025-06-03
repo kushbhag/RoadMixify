@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { forkJoin, Observable, of } from 'rxjs';
 import { Album } from 'src/app/models/album/album.model';
 import { Albums } from 'src/app/models/albums.model';
@@ -11,7 +12,10 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 @Component({
   selector: 'app-road-trip-playlist',
   templateUrl: './road-trip-playlist.component.html',
-  styleUrls: ['./road-trip-playlist.component.css']
+  styleUrls: ['./road-trip-playlist.component.css'],
+  imports: [
+    RouterModule
+  ]
 })
 export class RoadTripPlaylistComponent implements OnInit {
 

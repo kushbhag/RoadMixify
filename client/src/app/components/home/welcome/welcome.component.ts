@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { AnyARecord } from 'dns';
 import { User } from 'src/app/models/user.model';
 import { SpotifyService } from 'src/app/services/spotify.service';
@@ -6,7 +7,10 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.css']
+  styleUrls: ['./welcome.component.css'],
+  imports: [
+    RouterModule
+  ]
 })
 export class WelcomeComponent implements OnInit {
 

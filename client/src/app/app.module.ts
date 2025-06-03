@@ -26,7 +26,13 @@ import { PlaylistGeneratorComponent } from './components/playlist-generator/play
 import { PlaylistGeneratorPlaylistComponent } from './components/playlist-generator/playlist-generator-playlist/playlist-generator-playlist.component';
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    NgxPaginationModule,
     AppComponent,
     HomeComponent,
     RoadTripComponent,
@@ -39,14 +45,6 @@ import { PlaylistGeneratorPlaylistComponent } from './components/playlist-genera
     SortDirective,
     PlaylistGeneratorComponent,
     PlaylistGeneratorPlaylistComponent
-  ],
-  imports: [
-    CommonModule,
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    NgxPaginationModule
   ],
   providers: [
     SpotifyService,

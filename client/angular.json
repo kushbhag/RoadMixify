@@ -43,7 +43,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -121,8 +120,17 @@
               "devServerTarget": "client:serve:production"
             }
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "https://kushbhag.github.io/RoadMixify/",
+            "dir": "dist/client"
+          }
         }
       }
     }},
-  "defaultProject": "client"
+  "cli": {
+    "analytics": false
+  }
 }

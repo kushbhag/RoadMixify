@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { element } from 'protractor';
 import { Album } from 'src/app/models/album/album.model';
@@ -12,7 +13,11 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 @Component({
   selector: 'app-road-trip',
   templateUrl: './road-trip.component.html',
-  styleUrls: ['./road-trip.component.css']
+  styleUrls: ['./road-trip.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ]
 })
 export class RoadTripComponent implements OnInit {
 

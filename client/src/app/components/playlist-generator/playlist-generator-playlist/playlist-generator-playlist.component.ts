@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Track } from 'src/app/models/track.model';
 import { PlaylistService } from 'src/app/services/playlist.service';
 import { SpotifyService } from 'src/app/services/spotify.service';
@@ -6,7 +7,10 @@ import { SpotifyService } from 'src/app/services/spotify.service';
 @Component({
   selector: 'app-playlist-generator-playlist',
   templateUrl: './playlist-generator-playlist.component.html',
-  styleUrls: ['./playlist-generator-playlist.component.css']
+  styleUrls: ['./playlist-generator-playlist.component.css'],
+  imports: [
+    RouterModule
+  ]
 })
 export class PlaylistGeneratorPlaylistComponent implements OnInit {
 
